@@ -1,0 +1,135 @@
+/*
+e
+*/
+:root {
+    --menu_font_size: 30px;
+
+
+}
+zs-menubar
+{
+    font-size: 20px;
+    background: #5292f7;
+    color:white;
+    display: flex;
+    box-sizing: border-box;
+    z-index: 99999;
+    border:0;
+    margin: 0;
+    padding: 0;
+
+}
+zs-menu
+{
+    background-color: inherit;
+    color: inherit;
+    cursor: pointer;
+    display: block;
+
+}
+
+zs-menu > div
+{
+    border-style: solid;
+    border-width: 1px;
+
+    position: absolute;
+
+    color:inherit;
+    background-color: inherit;
+    display:none;
+    z-index: 99999;
+
+
+
+}
+zs-menubar > zs-menu
+{
+    display: inline-block;
+}
+
+
+zs-menu > a
+{
+    display: inline-block;
+    line-height: 1.1em;
+}
+zs-menu zs-menu.menushow > div
+ {
+     display: block;
+     left: 60px;
+ }
+zs-menubar > zs-menu > a
+{
+    display: block;
+
+}
+zs-menubar > zs-menu.menushow > div
+ {
+     display: block;
+
+ }
+zs-menubar > zs-menu
+{
+    /*
+    border-style: solid;
+    border-width: 1px;
+
+    border-right-color: white;
+    border-right-style: solid;
+    border-right-width: 2px;
+    */
+
+}
+zs-menu.menuhide > div
+{
+/*
+    display: none !important;
+*/
+}
+
+
+
+zs-menu.menushow > a
+{
+    background-color: blue;
+}
+zs-menu a
+{
+    background-color: inherit;
+    white-space: nowrap;
+    width: 100%;
+    padding: 10px;
+
+}
+
+zs-menuitem.textedit input
+{
+    display:inline !important;
+    font-size: 20px;
+    width: 6em;
+    margin-left: 5px;
+    margin-right: 0;
+    padding-right: 0;
+}
+
+zs-menuitem,zs-menulink
+{
+    color:inherit;
+    background-color: inherit;
+
+
+}
+zs-menuitem a:hover
+{
+    background-color: blue;
+}
+zs-menuitem a,zs-menulink a
+{
+    color:inherit;
+    background-color: inherit;
+    padding: 10px;
+    display: block;
+    cursor: pointer;
+    text-decoration: none;
+}

@@ -1,0 +1,6 @@
+/data/
+/package-lock.json
+node_modules
+*.js
+*.map
+*.DS_Store

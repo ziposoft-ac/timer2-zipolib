@@ -1,0 +1,136 @@
+
+
+html,
+body {
+    /* overflow:visible; */
+
+}
+
+:root {
+    --box_size: 200px;
+    --trans_time: 200ms;
+
+}
+
+main{
+    max-width: 800px;
+    /* margin: auto; */
+}
+zs-boxlist
+{
+    background-color: black;
+}
+zs-boxlist.contract
+{
+    display: none;
+}
+zs-boxlist.expand
+{
+    border: #a2aec7 1px solid;
+    width: 100%;
+    display:  flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+
+}
+zs-box
+{
+    font-size: 15px;
+    border: black 1px solid;
+    background-color: black;
+    flex-direction: column;
+    display: flex;
+    justify-content: flex-start;
+    transition: all var(--trans_time) linear;
+    flex-grow: 3;
+    flex-shrink: 3;
+    flex-basis: 32%;
+    align-items: center;
+
+}
+zs-box>img
+{
+    object-fit: cover;
+    width: 100%;
+    height:  100%;
+    transition: max-height var(--trans_time) linear;
+    /*
+    max-height: 100%;
+
+     */
+    max-height: min(200px,33vw);
+}
+zs-box.box_expand>img
+{
+}
+zs-box > div
+{
+
+    position: absolute;
+    color: white;
+    word-break: break-all;
+}
+.box_expand > div{
+    position: sticky;
+    top: 0px;
+
+    background-color: black;
+    z-index: 33;
+    padding: 10px;
+    text-align: center;
+}
+div {}
+
+.box_contract>div
+{
+
+
+}
+
+zs-box.box_contract
+{
+
+
+
+}
+zs-box.box_expand
+{
+    flex-basis: 100%;
+    max-width: 100vw;
+
+
+}
+
+.box_hide
+{
+    flex-basis: 0px;
+    flex-grow: 0;
+    max-width: 0px;
+    font-size: 0;
+
+}
+
+.box_contract
+{
+
+
+
+
+
+}
+
+
+
+
+
+
+zs-boximg>img
+{
+    max-width: 100%;
+}
+zs-boximg > div
+{
+    overflow:hidden;
+    max-width: 100%;
+}

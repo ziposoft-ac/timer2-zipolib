@@ -1,0 +1,36 @@
+html
+{
+    font-family:SansSerif;
+
+}
+body,html
+{
+    margin: 0;
+    width: 100vw;
+}
+
+table.objarr
+{
+
+    border-collapse: collapse;
+}
+table.objarr td,th
+{
+    padding: 5px;
+    border: #a2aec7 1px solid;
+    margin: 0;
+}
+
+
+.toggle-button
+{
+
+}
+.toggle-button-on
+{
+
+}
+.toggle-button-on
+{
+
+}

@@ -1,0 +1,36 @@
+{
+  "compileOnSave": true,
+  "compilerOptions":
+  {
+    "rootDir": "./",
+
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "ESNext",
+    "target": "es2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "baseUrl" : "./",
+    "paths" :
+    {
+      "/zs_client/*": ["./public/mod/*"],
+      "@zs_client/*": ["./public/mod/*"],
+      "@zs_server/*": ["./server/*"]
+    },
+    "disableSolutionSearching": true,
+
+  },
+
+  "exclude":
+  [
+
+  ],
+  "include":
+  [
+    "server",
+    "public/mod"
+  ]
+}

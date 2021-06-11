@@ -1,0 +1,63 @@
+
+
+export class  AjaxParams
+{
+
+    secure_token: string="";
+    debug=false;
+    requestId: string="none";
+    action:string=null;
+    params: Object;
+}
+export class AjaxResponse
+{
+
+    fetchResp : Response=null;
+    success: boolean = false;
+    log : string[]=[];
+    time_total_request: number=0;
+    error_msg: string="Not Processed";
+    data: Object;
+    stack: string="";
+
+}
+export class  AjaxParamsT<PARAMS  extends Object> extends AjaxParams
+{
+    constructor(paramT :   (new () => PARAMS)) {
+        super();
+        this.params=new paramT();
+    }
+    params: PARAMS;
+}
+export class AjaxResponseT<DATA extends Object> extends AjaxResponse
+{
+    constructor(dataT :   (new () => DATA)) {
+        super();
+        this.data=new dataT();
+    }
+    data: DATA;
+}
+function makeParam<PARAMS>(paramT :   (new () => PARAMS))
+{
+    return new AjaxParamsT<PARAMS>(paramT);
+}
+function makeResponse<DATA>(dataT :   (new () => DATA))
+{
+    return new AjaxResponseT<DATA>(dataT);
+}
+
+export class AjaxRequest<PARAMS,DATA>
+{
+
+    in:AjaxParamsT<PARAMS>;
+    out:AjaxResponseT<DATA>;
+}
+export function  Req<PARAMS,DATA>(paramT :   (new () => PARAMS),dataT :   (new () => DATA)  )
+{
+    let cl= class extends AjaxRequest<PARAMS,DATA>{ };
+    cl["pT"]=()=>makeParam(paramT);
+    cl["dT"]=()=>makeResponse(dataT);
+      return cl;
+}
+export type ReqT<P,D>= (new () => AjaxRequest<P,D>);
+

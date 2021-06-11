@@ -1,0 +1,22 @@
+{
+  "name": "zipolib",
+  "version": "1.0.0",
+  "description": "ZipoSoft, Inc. Typesscript Library",
+  "main": "index.js",
+  "type": "module",
+  "aliases": {
+    "/zs_client": "./public/mod",
+    "@zs_client": "./public/mod",
+    "@zs_server": "./server"
+  },
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/datatables.net": "^1.10.19",
+    "datatables": "^1.10.18",
+    "express": "^4.17.1",
+    "pretty": "^2.0.0"
+  }
+}
