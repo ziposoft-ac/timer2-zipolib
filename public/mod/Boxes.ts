@@ -91,7 +91,7 @@ export class ElmBox extends HTMLElement
     constructor(text: string,url:string=null) {
         super();
         this.head = document.createElement("div");
-        //this.list = <ElmBoxList>document.createElement("zs-boxlist");
+        //this.list = <ElmBoxList>document.createElement("zs_boxlist");
         this.appendChild(this.head);
         this.head.innerText= text;
 
@@ -192,7 +192,7 @@ export class ElmBoxImage extends ElmBox
 }
 
 
-customElements.define('zs-boximg', ElmBoxImage);
-customElements.define('zs-box', ElmBox);
-customElements.define('zs-boxlist', ElmBoxList);
+customElements.define('zs_boximg', ElmBoxImage);
+customElements.define('zs_box', ElmBox);
+customElements.define('zs_boxlist', ElmBoxList);
 

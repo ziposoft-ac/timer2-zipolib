@@ -1,0 +1,185 @@
+import * as fs from 'fs'
+import * as path from 'path'
+import {Dirent} from "fs";
+import * as express from "express";
+
+import {PageData}  from "/zs_client/PageData";
+import pretty from "pretty";
+
+const  fetchversion=Date.now();
+export interface PageProps
+{
+
+    req : express.Request;
+    main? : string ;
+}
+export async function GetPage(props : PageProps) : Promise<string>
+{
+
+    let p=new PageServer(props);
+    await p.build();
+    return p.fullpage();
+}
+export class PageServer
+{
+    debug=false;
+    googleTagId : string=null;
+    staticData : PageData={};
+
+    props : PageProps= {
+        req:null
+
+    };
+    title : string = "ZipoSoft";
+    description : string = null;
+    scripts : string[] =[] ;
+    css : string[] =["/zs_public/css/common.css"] ;
+    modules : string[] =[] ;
+    imports : object ={};
+    page_module: string = "/zs_client/ClientPage";
+    page_class: string = "Page";
+    enableCache=false;
+    constructor(props : PageProps) {
+        this.props=props;
+        if(props.req)
+        {
+            console.log("cookies:",props.req.cookies);
+            this.debug=props.req.cookies.debug ?? false;
+            console.log("this.debug:",this.debug);
+            this.debug=true;
+
+        }
+
+
+
+    }
+    async build()
+    {
+
+    }
+    head(): string
+    {
+        if(!this.description)
+            this.description=this.title;
+        let ss='';
+        for(let css of this.css)
+        {
+            ss+=` <link type="text/css" rel="stylesheet" href="${css}?vers=${fetchversion}"> `;
+        }
+        //<script data-main="/app/main" src="/lib/require.js"></script>
+       return `<html>
+        <head><title>${this.title}</title>
+            <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+            <meta name="author" content="ZipoSoft, Inc."/>
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        ${ss}
+        </head>
+        <body>`;
+    }
+    foot(): string
+    {
+        let h="";
+
+        if(this.enableCache)
+        {
+            let files=[...this.scripts,...this.modules,...Object.values(this.imports),this.page_module];
+            this.scripts.push('/service-worker');
+            h+=`<script>const PRECACHE = 'precache-v1';const RUNTIME = 'runtime';const PRECACHE_URLS = [`;
+            for(let file of files)
+                h+=`'${file}',`;
+            h+=`];</script>`;
+
+
+        }
+        let staticDataJson = JSON.stringify(this.staticData);
+        //h+="<script>var page_data="+staticDataJson+"</script>";
+        for(let script of this.scripts)
+        {
+            h+=`<script  src="${script}.js"></script>`;
+        }
+        for(let mod of this.modules)
+        {
+            h+=`<script type="module" src="${mod}.js"></script>`;
+        }
+        for(let name in this.imports)
+        {
+            let path=this.imports[name];
+            h+=`<script type="module" >import * as mod from "${path}.js";window["${name}"]=mod;</script>`;
+        }
+        h+=`<script type="module" >
+                import ClientPage from "${this.page_module}.js";
+                window["page"]=new ClientPage(${staticDataJson});</script>`;
+
+        if(this.debug)
+        {
+            //node_modules/source-map-support/browser-source-map-support.js
+            // ONLY FOR NODE, not browsers
+            //h+='<script src="/node/source-map-support/browser-source-map-support.js"></script><script>sourceMapSupport.install();</script>';
+        }
+        if(this.googleTagId)
+        {
+            h+=`<script async src="https://www.googletagmanager.com/gtag/js?id=${this.googleTagId}"></script>
+            <script>window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date()); gtag('config', '${this.googleTagId}');
+            </script>`;
+        }
+
+        h+="</body></html>";
+        return h;
+    }
+    header() : string { return "" }
+    footer() : string { return "" }
+    main(): string
+    {
+        if(this.props["main"])
+        {
+            return this.props.main;
+        }
+        return `defalt body`;
+    }
+
+    fullpage() : string
+    {
+
+        let page = this.head()
+            + "<header>"+this.header() + "</header>"
+            + "<main id='main'>"+this.main() + "</main>"
+            + "<footer>"+this.footer() + "</footer>"
+            +  this.foot();
+        if(this.debug)
+            page=pretty(page);
+        return page;
+    }
+    sendResponse(response: express.Response)
+    {
+        let pageHtml=this.fullpage();
+        response.send(pageHtml);
+
+    }
+
+}
+
+export class PageException extends PageServer
+{
+    exp : any =null;
+    constructor(props:PageProps, e) {
+        super(props);
+        this.exp=e;
+
+
+    }
+    main(): string
+    {
+        let txt="Unkonw Error";
+        if("stack" in this.exp)
+        {
+            txt=this.exp.stack;
+        }
+
+
+        return `<h1>PageException: </h1><pre>${txt}</pre>`;
+    }
+
+
+}

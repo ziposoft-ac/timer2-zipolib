@@ -1,0 +1,185 @@
+
+
+
+:root {
+    --box_size: 200px;
+    --trans_time: 200ms;
+
+}
+
+
+.zs_box
+{
+    font-size: 15px;
+    flex-direction: row;
+    display: flex;
+    justify-content: center;
+    transition: all var(--trans_time) linear;
+    flex-grow: 3;
+    flex-shrink: 3;
+    flex-wrap: wrap;
+    align-items: stretch;
+    background-color: black;
+}
+.zs_box.expand
+{
+    flex-basis: 100%;
+    max-width: 100vw;
+}
+.boxhide
+{
+    flex-basis: 0;
+    flex-grow: 0;
+    max-width: 0;
+    font-size: 0;
+    display: none;
+}
+
+.zs_box_list
+{
+}
+.zs_box_list.lvl1
+{
+    background-color: rgb(240,242,245);
+}
+
+.zs_box_list.lvl2
+{
+    /* background-color: white; */
+    border-radius: 10px;
+}
+.zs_box_list.expand
+{
+    /* border: #a2aec7 1px solid; */
+    width: calc(100% - 3px);
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    margin-top:20px;
+    /* padding: 10px 0 10px 0; */
+}
+.zs_box>img
+{
+    transition: all var(--trans_time) linear;
+
+}
+.zs_box.contract>img
+{
+    object-fit:cover;
+    width: 100%;
+    height:  100%;
+    /* max-height: 100%; */
+    max-height: min(200px,33vw);
+    transition: all var(--trans_time) linear;
+    padding: 1px;
+}
+.expand > img
+{
+    object-fit:contain;
+    width:  100%;
+    max-height:    min(80vh,100vw) !important;
+
+    transition: all var(--trans_time) linear;
+
+}
+
+.zs_box_header,.image_label
+{
+    color: white;
+
+
+    text-overflow: clip;
+    word-break: break-all;
+}
+
+.zs_box.boxhide > .zs_box_header{
+    display:none;
+}
+.header1
+{
+    font-size: x-large;
+    text-align: left;
+    z-index: 49;
+    background-color: rgb(240,242,245);
+
+}
+.expand >.header1
+{
+    top: calc(40px + var(--offset));
+    text-align: center;
+    /*
+    display: flex;
+    align-items: center;
+    text-align: center;
+*/
+}
+/*
+.expand > .header1:after{
+    content: '';
+    flex: 1;
+    border-bottom: 3px solid #000;
+}
+.expand > .header1:not(:empty)::after{
+    margin-left: .25em;
+}
+
+ */
+.expand >.header2
+{
+    top: calc(80px + var(--offset));
+    z-index: 48;
+    border-radius: 10px 10px 0 0;
+    background-color: white;
+
+}
+.expand >.header3
+{
+    top: calc(120px + var(--offset));
+    z-index: 47;
+
+}
+.contract > .image_label
+{
+    display: none;
+}
+.expand > .image_label
+{
+    margin: -20px;
+    position: relative;
+    text-align: center;
+    max-width: 100%;
+    top: -5px;
+}
+.expand > .zs_box_header{
+    position: sticky;
+    flex-basis: 100%;
+    flex-shrink: 0;
+    /* background-color: white; */
+    color: black;
+    /* z-index: 44; */
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.contract > .zs_box_header {
+    position: absolute;
+    text-align: center;
+    max-width: 100%;
+    width: 100px;
+
+}
+
+
+
+
+
+.box_contract
+{
+
+
+
+
+
+}
+
+
+

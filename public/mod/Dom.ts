@@ -44,6 +44,13 @@ interface HTMLElementEx extends HTMLElement
     valNum(value?:number): number;
 
 }
+export function create<K extends keyof HTMLElementTagNameMap>(tagName: K,cl:string=null,id:string=null): HTMLElementTagNameMap[K]
+{
+    let e: HTMLElementTagNameMap[K]= document.createElement(tagName);
+    if(cl) e.className=cl;
+    if(id) e.id=id;
+    return e;
+}
 
 
 
@@ -54,10 +61,7 @@ export function all(s:string) : Elements
   return  <Elements> document.querySelectorAll(s );
 }
 
-window["on"] = Node.prototype["on"] = function (event, fn) {
-    this.addEventListener(event, fn, false);
-    return this;
-};
+
 HTMLElement.prototype["clear"] = function ():string {
     if("value" in this)
     {
@@ -82,12 +86,6 @@ HTMLElement.prototype["valNum"] = function (valin:number):number {
             this.value=valin;
         return Number(this.value);
     }
-};
-NodeList.prototype["on"] = function (event, fn) {
-    this['forEach'](function (el) {
-        el.on(event, fn);
-    });
-    return this;
 };
 
 NodeList.prototype["clear"] = function () {
