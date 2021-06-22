@@ -24,6 +24,7 @@
     "@types/better-sqlite3": "^5.4.1",
     "better-sqlite3": "^7.1.2",
     "@types/node-fetch": "^2.5.8",
-    "cheerio": "^1.0.0-rc.5"
+    "cheerio": "^1.0.0-rc.5",
+    "@types/cheerio": "^0.22.23"
   }
 }

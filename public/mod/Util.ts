@@ -51,7 +51,78 @@ export function objClone(src:Object) : Object
     }
     return clone(src,0);
 }
+export class Factory
+{
+    classes : Record<string,any>={};
 
+
+    load(json:string) : object
+    {
+        let temp=JSON.parse(json);
+
+        let createObj=(objIn:Object) : Object=>{
+
+            let type=objIn["__type__"];
+            if(!type)
+                return objIn;
+            delete(objIn["__type__"]);
+            let objOut=this.newObj(type,);
+            if(!objOut)
+                return objIn;
+            for (const [k, value] of Object.entries(objIn)) {
+                let v=value;
+                if(typeof value === "object")
+                {
+                    v=createObj(value);
+                }
+                if(k in objOut) objOut[k]=v;
+            }
+            return objOut;
+
+        }
+        return createObj(temp);
+    }
+    save(obj:object,pretty=false) : string
+    {
+        let assignType=(obj:Object,depth) : void=>
+        {
+            if(!obj) return;
+
+            if(++depth > 10)
+                throw Error("Object assign recursion exceeds 10.");
+            for (const [, value] of Object.entries(obj))
+            {
+                if(typeof value === "object")
+                    assignType(value,depth);
+            }
+            obj["__type__"]=obj.constructor.name;
+        }
+        assignType(obj,0);
+        return JSON.stringify(obj,null,(pretty?2:0));
+    }
+    constructor(
+        classes : any[]=[]
+    )
+    {
+        for(let c of classes)
+        {
+            this.classes[c.name]=c;
+        }
+    }
+    newObj(type:string) : Object
+    {
+        let c=this.classes[type];
+        if(!c)
+            return null;
+        let obj=new c();
+        /*
+        for(let k in props)
+            if(k in obj) obj[k]=props[k];
+            */
+
+        return obj;
+    }
+}
 
 export function stringToBase64(str: string): string {
     const buff = Buffer.from(str, 'utf8');
