@@ -75,6 +75,7 @@
 .expand > img
 {
     object-fit:contain;
+
     width:  100%;
     max-height:    min(80vh,100vw) !important;
 
