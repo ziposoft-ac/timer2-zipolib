@@ -54,7 +54,26 @@ export function objClone(src:Object) : Object
 export class Factory
 {
     classes : Record<string,any>={};
+    save(obj:object,pretty=false) : string
+    {
+        let clone=(src:Object,depth) : Object=>
+        {
 
+            if(++depth > 10)
+                throw Error("Object assign recursion exceeds 10.");
+            if(!src) return;
+            let  dest=Object.assign({},src);
+            for (const [key, value] of Object.entries(dest)) {
+                if(typeof value === "object")
+                    dest[key]=clone(value,depth);
+            }
+
+            dest["__type__"]=src.constructor.name;
+            return dest;
+        }
+        let copy=clone(obj,0);
+        return JSON.stringify(copy,null,(pretty?2:0));
+    }
 
     load(json:string) : object
     {
@@ -63,26 +82,27 @@ export class Factory
         let createObj=(objIn:Object) : Object=>{
 
             let type=objIn["__type__"];
-            if(!type)
-                return objIn;
-            delete(objIn["__type__"]);
-            let objOut=this.newObj(type,);
-            if(!objOut)
-                return objIn;
+            let objOut=null;
+            if(type)
+            {
+                delete(objIn["__type__"]);
+                objOut=this.newObj(type);
+            }
+            else objOut={};
             for (const [k, value] of Object.entries(objIn)) {
                 let v=value;
                 if(typeof value === "object")
                 {
                     v=createObj(value);
                 }
-                if(k in objOut) objOut[k]=v;
+                objOut[k]=v;
             }
             return objOut;
 
         }
         return createObj(temp);
     }
-    save(obj:object,pretty=false) : string
+    saveInPlace(obj:object,pretty=false) : string
     {
         let assignType=(obj:Object,depth) : void=>
         {
@@ -112,15 +132,7 @@ export class Factory
     newObj(type:string) : Object
     {
         let c=this.classes[type];
-        if(!c)
-            return null;
-        let obj=new c();
-        /*
-        for(let k in props)
-            if(k in obj) obj[k]=props[k];
-            */
-
-        return obj;
+        return (c?new c(): new Object());
     }
 }
 

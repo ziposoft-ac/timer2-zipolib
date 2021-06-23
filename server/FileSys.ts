@@ -1,6 +1,26 @@
 import * as fs from "fs";
 import * as  pathlib from "path";
 
+
+export async function getFileStat(filename) :Promise< { stats: fs.Stats, error: Object}>
+{
+    let stats=null;
+    let error=null;
+    stats= await fs.promises.stat(filename).catch(
+        (err)=>{
+            if(err['code']&&(err.code=='ENOENT'))
+            {
+
+            }
+            else
+            {
+                error=err;
+            }
+        }
+    );
+    return {stats,error};
+}
+
 interface treeOptions
 {
     rootpath: string,

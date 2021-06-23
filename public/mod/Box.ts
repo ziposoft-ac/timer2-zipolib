@@ -183,8 +183,12 @@ export class BoxList extends Box
         console.log("BoxList click",this.level,this.title);
 
         setTimeout(() => {
-            this.elm.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
-            //this.img.scrollIntoView(true);
+            let y = this.elmTitle.getBoundingClientRect().top + window.scrollY;
+            let offset=0;
+            if(this.parent)
+                offset=this.parent.elmTitle.getBoundingClientRect().bottom;
+
+            window.scrollTo({behavior:"smooth",top:y-88})
         },300);
 
         ev.stopPropagation();
@@ -204,11 +208,14 @@ export class BoxImage extends Box
 {
     elmTitle : HTMLDivElement;
     img : HTMLImageElement;
+    imgUrl:string;
+
 
     constructor(parent:BoxList,title: string,url:string,thumbnail:string,shown=true) {
         super(parent,title);
         this.img=$.create("img");
-        this.img.src=url;
+        this.imgUrl=url;
+        this.img.src=thumbnail;
         this.img.title=title;
         this.elm.classList.add("zs_box_image");
         this.elm.appendChild(this.img);
@@ -223,10 +230,19 @@ export class BoxImage extends Box
 
         console.log("BoxImage click");
         ev.stopPropagation();
+        if(this.imgUrl)
+        {
+            this.img.src=this.imgUrl;
+            this.imgUrl=null;
+        }
         this.toggle();
         if(this.expanded) {
             setTimeout(() => {
-                this.elm.scrollIntoView({behavior: "smooth", block: "nearest", inline: "nearest"});
+                //this.elm.scr
+                const y = this.elm.getBoundingClientRect().top + window.scrollY;
+                const offset=this.parent.elmTitle.getBoundingClientRect().bottom;
+                window.scrollTo({behavior:"smooth",top:y-offset})
+                //this.elm.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
                 //this.img.scrollIntoView(true);
             },300);
 

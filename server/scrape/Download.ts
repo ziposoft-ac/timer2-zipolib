@@ -36,3 +36,39 @@ export async function downloadImg(url:string,path:string,baseFileName:string,cal
     }
 
 }
+/**
+ * Download and save a file from a url. Called async
+ * @param url - full url to web
+ * @param fullPath - fullpath and filename
+ * @param callback - returns the filename with .jpg or .png ext, or error
+ */
+export async function downloadFile(url:string,fullPath:string,callback: (error)=>void)
+{
+    let response: Response<string>=null;
+    let error: any=null;
+    try {
+        response = await got(url,
+            {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36'
+                },
+            }
+        );
+        if(response.statusCode!=200)
+        {
+            callback(new Error("Error downloading image:"+response.statusCode));
+            return;
+        }
+        fs.writeFile(fullPath,
+            response.rawBody,
+            { encoding:"binary"},(err)=> callback(err)  );
+
+    }
+    catch (error) {
+        //fs.writeFileSync("error.html",error.response.body);
+        if(error["response"])
+            console.log("error:", error.response.statusCode, "URL:",url);
+        callback(error);
+    }
+
+}
