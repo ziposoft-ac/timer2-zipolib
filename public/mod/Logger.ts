@@ -59,7 +59,9 @@ export class Logger
         let s=e.stack;
         this.log(s);
     }
-
+    except(e)
+    {
+    }
     traceLine(depth=0)
     {
         let e=new Error();
@@ -88,4 +90,4 @@ export class Logger
 
 
 
-export var glog =new Logger();
+export var gLog =new Logger();

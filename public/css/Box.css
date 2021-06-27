@@ -3,18 +3,18 @@
 
 :root {
     --box_size: 200px;
-    --trans_time: 200ms;
+    --trans_time: 300ms;
 
 }
 
 
 .zs_box
 {
-    font-size: 15px;
+    font-size: calc(10px + .5vw);
     flex-direction: row;
     display: flex;
     justify-content: center;
-    transition: all var(--trans_time) linear;
+    transition: all var(--trans_time) ease;
     flex-grow: 3;
     flex-shrink: 3;
     flex-wrap: wrap;
@@ -25,6 +25,8 @@
 {
     flex-basis: 100%;
     max-width: 100vw;
+    transition: all var(--trans_time) ease;
+
 }
 .boxhide
 {
@@ -37,6 +39,8 @@
 
 .zs_box_list
 {
+    transition: all var(--trans_time) ease;
+
 }
 .zs_box_list.lvl1
 {
@@ -56,10 +60,12 @@
     margin-bottom: 20px;
     margin-top:20px;
     /* padding: 10px 0 10px 0; */
+    transition: all var(--trans_time) ease;
+
 }
 .zs_box>img
 {
-    transition: all var(--trans_time) linear;
+    transition: all var(--trans_time) ease;
 
 }
 .zs_box.contract>img
@@ -69,7 +75,10 @@
     height:  100%;
     /* max-height: 100%; */
     max-height: min(200px,33vw);
+    /*
     transition: all var(--trans_time) linear;
+
+     */
     padding: 1px;
 }
 .expand > img
@@ -79,17 +88,24 @@
     width:  100%;
     max-height:    min(80vh,100vw) !important;
 
-    transition: all var(--trans_time) linear;
+    transition: all var(--trans_time) ease;
 
 }
+.contract > .zs_box_header
+{
 
+    text-shadow: 0 0 5px black;
+
+}
 .zs_box_header,.image_label
 {
     color: white;
 
-
     text-overflow: clip;
-    word-break: break-all;
+    /*
+        word-break: break-all;
+
+     */
 }
 
 .zs_box.boxhide > .zs_box_header{

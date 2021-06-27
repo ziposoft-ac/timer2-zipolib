@@ -9,6 +9,9 @@ export class ServerRequest
     out:AjaxResponse;
     logger=new Logger();
 
+    log(...args: any[]) {
+        this.logger.log(...args);
+    };
     trace()
     {
         this.logger.traceLine(1);

@@ -36,6 +36,7 @@ export function getSR(id: string) : typeof ServerRequest
 
 export async function processSR(req: EX.Request,res:EX.Response)
 {
+
     let ts_start=Date.now();
     let reqId=req.body["requestId"];
     let sr : ServerRequest=null;
@@ -43,7 +44,8 @@ export async function processSR(req: EX.Request,res:EX.Response)
     if(srFact)
     {
         sr=new srFact();
-        console.log("got SR:",srFact.name);
+        let log=sr.logger;
+        log.log("got SR:",srFact.name);
 
         //Get the SR
         let input=sr.in;
@@ -63,7 +65,7 @@ export async function processSR(req: EX.Request,res:EX.Response)
                         func=act;
                     else
                     {
-                        console.log("Unknown act!");
+                        log.log("Unknown act!");
                         func=null;
                         sr.out.error_msg="Unknwon action:"+act;
                     }
@@ -83,7 +85,7 @@ export async function processSR(req: EX.Request,res:EX.Response)
         catch (e)
         {
             success=false;
-            console.log(e);
+            log.log(e);
             out.error_msg='Something broke!';
             if("stack" in e)
             {
@@ -93,7 +95,7 @@ export async function processSR(req: EX.Request,res:EX.Response)
             {
                 out.error_msg=e.message;
             }
-            console.log(out.error_msg);
+            log.log(out.error_msg);
         }
         out.success=success;
     }
@@ -108,7 +110,7 @@ export async function processSR(req: EX.Request,res:EX.Response)
     }
     catch (e)
     {
-        console.dir(e)
+        sr.logger.log(e)
     }
 
 }

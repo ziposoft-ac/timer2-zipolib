@@ -2,7 +2,7 @@ import * as $ from "/zs_client/Dom.js";
 import {ElmBox} from "/zs_client/Boxes";
 
 
-const animateDelay=200;
+const animateDelay=300;
 
 
 export interface IBox
@@ -203,7 +203,6 @@ export class BoxList extends Box
         return false;
     }
 }
-
 export class BoxImage extends Box
 {
     elmTitle : HTMLDivElement;
@@ -236,7 +235,8 @@ export class BoxImage extends Box
             this.imgUrl=null;
         }
         this.toggle();
-        if(this.expanded) {
+        //if(this.expanded)
+        {
             setTimeout(() => {
                 //this.elm.scr
                 const y = this.elm.getBoundingClientRect().top + window.scrollY;
@@ -247,6 +247,32 @@ export class BoxImage extends Box
             },300);
 
         }
+
+
+        return false;
+    }
+
+}
+
+export class BoxText extends Box
+{
+    elmText : HTMLDivElement;
+    imgUrl:string;
+
+    constructor(parent:BoxList,title: string,url:string,thumbnail:string,shown=true) {
+        super(parent,title);
+        this.elmText=$.create("div");
+        this.elm.classList.add("zs_box_text");
+        this.elm.appendChild(this.elmText);
+
+    }
+    onClick(ev:MouseEvent)
+    {
+        if(this.preview)
+            return false;
+
+        console.log("BoxImage click");
+        ev.stopPropagation();
 
 
         return false;

@@ -5,6 +5,7 @@ import * as express from "express";
 
 import {PageData}  from "/zs_client/PageData";
 import pretty from "pretty";
+import {Logger} from "/zs_client/Logger";
 
 const  fetchversion=Date.now();
 export interface PageProps
@@ -22,9 +23,17 @@ export async function GetPage(props : PageProps) : Promise<string>
 }
 export class PageServer
 {
+    log: Logger=new Logger();
     debug=false;
     googleTagId : string=null;
     staticData : PageData={};
+
+    private redirectUrl:string=null;
+
+    redirect(url:string)
+    {
+        this.redirectUrl=url;
+    }
 
     props : PageProps= {
         req:null
@@ -153,6 +162,12 @@ export class PageServer
     }
     sendResponse(response: express.Response)
     {
+        if(this.redirectUrl)
+        {
+            response.redirect(this.redirectUrl);
+            console.log("Redirect to: "+this.redirectUrl);
+            return;
+        }
         let pageHtml=this.fullpage();
         response.send(pageHtml);
 

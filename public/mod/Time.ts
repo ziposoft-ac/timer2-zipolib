@@ -7,10 +7,6 @@
  */
 
 
-export function fuckYou(ts_milliseconds) {
-    let date = new Date(ts_milliseconds);
-    return  date.toLocaleDateString();
-}
 
 export function getReadableDateFromMs(ts_milliseconds) {
     let date = new Date(ts_milliseconds);
@@ -33,6 +29,15 @@ function formatDate(date) {
     minutes = minutes < 10 ? '0'+minutes : minutes;
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return (date.getMonth()+1) + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+}
+export function getDateTimeFileName(date: Date) {
+
+    let fn=date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+"_"+date.getHours()+"-"+date.getMinutes()+"-"+date.getSeconds();
+    return fn;
+}
+export function getDateTimeFileNameCurrent() {
+
+    return getDateTimeFileName(new Date());
 }
 
 export function getAgeFromBday(fromday,day, month, year) {
