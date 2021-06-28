@@ -121,7 +121,6 @@
 }
 .expand >.header1
 {
-    top: calc(40px + var(--offset));
     text-align: center;
     /*
     display: flex;
@@ -129,6 +128,17 @@
     text-align: center;
 */
 }
+
+.expand >.header1
+{
+}
+
+.expand >.header1
+{
+    /*noinspection CssUnresolvedCustomProperty*/
+    top: calc(40px + var(--offset));
+}
+
 /*
 .expand > .header1:after{
     content: '';
@@ -141,7 +151,8 @@
 
  */
 .expand >.header2
-{
+{    /*noinspection CssUnresolvedCustomProperty*/
+
     top: calc(80px + var(--offset));
     z-index: 48;
     border-radius: 10px 10px 0 0;
@@ -149,9 +160,11 @@
 
 }
 .expand >.header3
-{
+{    /*noinspection CssUnresolvedCustomProperty*/
+
     top: calc(120px + var(--offset));
     z-index: 47;
+    background-color: white;
 
 }
 .contract > .image_label

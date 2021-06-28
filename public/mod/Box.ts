@@ -42,7 +42,7 @@ export class Box
         this.elmTitle=$.create("div");
 
         this.elmTitle.textContent=title;
-
+        this.elmTitle.onclick=(ev)=>{return this.onTitleClick(ev);}
         this.elm.appendChild(this.elmTitle);
 
         this.setShow(shown);
@@ -94,6 +94,13 @@ export class Box
 
         this.expand(!this.expanded);
 
+    }
+    onTitleClick(ev:MouseEvent)
+    {
+        console.log("onTitleClick");
+        //ev.stopPropagation();
+        //this.toggle();
+        return false;
     }
     onClick(ev:MouseEvent)
     {
@@ -174,13 +181,27 @@ export class BoxList extends Box
     }
     expand(expanded:boolean)
     {
-        super.expand(expanded);
+        super.expand(expanded); //change classes
         this.showChildren(expanded);
 
     }
+    onTitleClick(ev:MouseEvent)
+    {
+        ev.stopPropagation();
+        this.toggle();
+
+        console.log("onTitleClick");
+        //ev.stopPropagation();
+        //this.toggle();
+        return false;
+    }
     onClick(ev:MouseEvent)
     {
+        ev.stopPropagation();
+
         console.log("BoxList click",this.level,this.title);
+        if(this.parent?.onClick(ev)) return true;
+        if(this.expanded) return false;
 
         setTimeout(() => {
             let y = this.elmTitle.getBoundingClientRect().top + window.scrollY;
@@ -191,16 +212,15 @@ export class BoxList extends Box
             window.scrollTo({behavior:"smooth",top:y-88})
         },300);
 
-        ev.stopPropagation();
         if(!this.parent)
         {
             this.expandChildren(false);
-            return false;
+            return true;
 
 
         }
         this.toggle();
-        return false;
+        return true;
     }
 }
 export class BoxImage extends Box
@@ -224,11 +244,15 @@ export class BoxImage extends Box
     }
     onClick(ev:MouseEvent)
     {
+        ev.stopPropagation();
+
+        console.log("BoxImage click:",this.img.title);
+
+        if(this.parent?.onClick(ev)) return true;
+
         if(this.preview)
             return false;
 
-        console.log("BoxImage click");
-        ev.stopPropagation();
         if(this.imgUrl)
         {
             this.img.src=this.imgUrl;

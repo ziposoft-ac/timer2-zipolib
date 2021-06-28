@@ -37,9 +37,8 @@ export function getSR(id: string) : typeof ServerRequest
 export async function processSR(req: EX.Request,res:EX.Response)
 {
 
-    let ts_start=Date.now();
     let reqId=req.body["requestId"];
-    let sr : ServerRequest=null;
+    let sr : ServerRequest;
     let srFact = getSR(reqId);
     if(srFact)
     {
@@ -65,9 +64,9 @@ export async function processSR(req: EX.Request,res:EX.Response)
                         func=act;
                     else
                     {
-                        log.log("Unknown act!");
+                        log.log("Unknown act:",act);
                         func=null;
-                        sr.out.error_msg="Unknwon action:"+act;
+                        sr.out.error_msg="Unknown action:"+act;
                     }
                 }
                 if(func)
