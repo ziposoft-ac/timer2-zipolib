@@ -7,7 +7,7 @@ import {PageData}  from "/zs_client/PageData";
 import pretty from "pretty";
 import {Logger} from "/zs_client/Logger";
 
-const  fetchversion=Date.now();
+const  gFetchversion=Date.now();
 export interface PageProps
 {
 
@@ -27,7 +27,7 @@ export class PageServer
     debug=false;
     googleTagId : string=null;
     staticData : PageData={};
-
+    fetchVersion=gFetchversion;
     private redirectUrl:string=null;
 
     redirect(url:string)
@@ -73,7 +73,7 @@ export class PageServer
         let ss='';
         for(let css of this.css)
         {
-            ss+=` <link type="text/css" rel="stylesheet" href="${css}?vers=${fetchversion}"> `;
+            ss+=` <link type="text/css" rel="stylesheet" href="${css}?vers=${this.fetchVersion}"> `;
         }
         //<script data-main="/app/main" src="/lib/require.js"></script>
        return `<html>
@@ -104,11 +104,11 @@ export class PageServer
         //h+="<script>var page_data="+staticDataJson+"</script>";
         for(let script of this.scripts)
         {
-            h+=`<script  src="${script}.js"></script>`;
+            h+=`<script  src="${script}.js?v=${this.fetchVersion}"></script>`;
         }
         for(let mod of this.modules)
         {
-            h+=`<script type="module" src="${mod}.js"></script>`;
+            h+=`<script type="module" src="${mod}.js?v=${this.fetchVersion}"></script>`;
         }
         for(let name in this.imports)
         {
@@ -116,7 +116,7 @@ export class PageServer
             h+=`<script type="module" >import * as mod from "${path}.js";window["${name}"]=mod;</script>`;
         }
         h+=`<script type="module" >
-                import ClientPage from "${this.page_module}.js";
+                import ClientPage from "${this.page_module}.js?vers=${this.fetchVersion}";
                 window["page"]=new ClientPage(${staticDataJson});</script>`;
 
         if(this.debug)

@@ -1,9 +1,6 @@
 import * as $ from "/zs_client/Dom.js";
-import {ElmBox} from "/zs_client/Boxes";
-
 
 const animateDelay=300;
-
 
 export interface IBox
 {
@@ -61,8 +58,9 @@ export class Box
             this.elm.classList.add('boxhide');
         }
     }
-    private setExpand(expanded:boolean)
+    private setExpand(expanded:boolean) : boolean //return true if changed
     {
+        let change=(this.expanded!==expanded)
         this.expanded=expanded;
         if(expanded)
         {
@@ -74,6 +72,7 @@ export class Box
             this.elm.classList.add('contract');
             this.elm.classList.remove('expand');
         }
+        return change;
     }
     setLeveL(lvl:number)
     {
@@ -84,9 +83,9 @@ export class Box
     {
         this.setShow(shown);
     }
-    expand(expanded:boolean)
+    expand(expanded:boolean) : boolean//return true if changed
     {
-        this.setExpand(expanded);
+        return this.setExpand(expanded);
 
     }
     toggle()
@@ -151,14 +150,17 @@ export class BoxList extends Box
         this.items.push(item);
         this.elm.appendChild(item.elm);
     }
-    expandChildren (expanded:boolean)
+    expandChildren (expanded:boolean):boolean //return true if ANY changed
     {
+        let changed=false;
         this.items.forEach(
             (box,i)=>
             {
-                box.expand(expanded);
+                if(box.expand(expanded))
+                    changed=true;
             }
         );
+        return changed;
     }
     showChildren (expanded:boolean)
     {
@@ -179,16 +181,25 @@ export class BoxList extends Box
             }
         );
     }
-    expand(expanded:boolean)
+    expand(expanded:boolean):boolean //return true if changed
     {
-        super.expand(expanded); //change classes
+        let changed=super.expand(expanded); //change classes
         this.showChildren(expanded);
-
+        return changed;
     }
     onTitleClick(ev:MouseEvent)
     {
         ev.stopPropagation();
+
+        if(this.expanded)
+        {
+            let changed=this.expandChildren(false);
+            if(changed)
+                return ;
+        }
+
         this.toggle();
+
 
         console.log("onTitleClick");
         //ev.stopPropagation();

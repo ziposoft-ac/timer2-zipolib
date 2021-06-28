@@ -1,5 +1,6 @@
-
-
+/*
+BOXES
+ */
 
 :root {
     --box_size: 200px;
@@ -10,7 +11,7 @@
 
 .zs_box
 {
-    font-size: calc(10px + .5vw);
+    font-size: calc(15px);
     flex-direction: row;
     display: flex;
     justify-content: center;
@@ -58,7 +59,7 @@
     width: calc(100% - 3px);
     flex-wrap: wrap;
     margin-bottom: 20px;
-    margin-top:20px;
+
     /* padding: 10px 0 10px 0; */
     transition: all var(--trans_time) ease;
 
@@ -97,6 +98,10 @@
     text-shadow: 0 0 5px black;
 
 }
+.zs_box_image
+{
+    flex-direction: column;
+}
 .zs_box_header,.image_label
 {
     color: white;
@@ -116,12 +121,12 @@
     font-size: x-large;
     text-align: left;
     z-index: 49;
-    background-color: rgb(240,242,245);
+
 
 }
 .expand >.header1
 {
-    text-align: center;
+
     /*
     display: flex;
     align-items: center;
@@ -129,9 +134,6 @@
 */
 }
 
-.expand >.header1
-{
-}
 
 .expand >.header1
 {
@@ -150,13 +152,15 @@
 }
 
  */
+.expand >.header2:before
+{
+    content: "»";
+}
 .expand >.header2
 {    /*noinspection CssUnresolvedCustomProperty*/
 
     top: calc(80px + var(--offset));
     z-index: 48;
-    border-radius: 10px 10px 0 0;
-    background-color: white;
 
 }
 .expand >.header3
@@ -164,7 +168,6 @@
 
     top: calc(120px + var(--offset));
     z-index: 47;
-    background-color: white;
 
 }
 .contract > .image_label
@@ -173,11 +176,13 @@
 }
 .expand > .image_label
 {
-    margin: -20px;
+    margin: 0px;
     position: relative;
     text-align: center;
     max-width: 100%;
-    top: -5px;
+    bottom: 40px;
+    height: 0;
+    font-size: large;
 }
 .expand > .zs_box_header{
     position: sticky;
@@ -185,8 +190,11 @@
     flex-shrink: 0;
     /* background-color: white; */
     color: black;
-    /* z-index: 44; */
+    font-size: x-large;
+    text-align: center;
+
     padding-bottom: 10px;
+    background-color: rgb(240,242,245);
     padding-top: 10px;
 }
 
@@ -197,7 +205,10 @@
     width: 100px;
 
 }
+.contract > .contract > .zs_box_header {
 
+    display: none;
+}
 
 
 

@@ -42,7 +42,7 @@ export async function downloadImg(url:string,path:string,baseFileName:string,cal
  * @param fullPath - fullpath and filename
  * @param callback - returns the filename with .jpg or .png ext, or error
  */
-export async function downloadFile(url:string,fullPath:string,callback: (error)=>void)
+export async function downloadFile(url:string,fullPath:string,callback: (error)=>void) : Promise<boolean>
 {
     let response: Response<string>=null;
     let error: any=null;
@@ -57,11 +57,12 @@ export async function downloadFile(url:string,fullPath:string,callback: (error)=
         if(response.statusCode!=200)
         {
             callback(new Error("Error downloading image:"+response.statusCode));
-            return;
+            return false;
         }
         fs.writeFile(fullPath,
             response.rawBody,
             { encoding:"binary"},(err)=> callback(err)  );
+        return true;
 
     }
     catch (error) {
@@ -70,5 +71,6 @@ export async function downloadFile(url:string,fullPath:string,callback: (error)=
             console.log("error:", error.response.statusCode, "URL:",url);
         callback(error);
     }
+    return false;
 
 }
