@@ -9,15 +9,16 @@ export interface IBox
 export class Box
 {
     elm : HTMLDivElement;
-    elmTitle : HTMLDivElement;
-    title="";
+    elmTitle : HTMLDivElement=null;
+    text="";
     expanded=false;
     level=1;
-
+    type: string=null;
     shown=false;
     preview=false;
     parent: BoxList=null;
-    constructor(parent:BoxList,title:string,shown=true,expand=false) {
+    constructor(parent:BoxList,type:string,
+                text:string,shown=true,expand=false) {
 
         this.parent=parent;
         if(parent)
@@ -26,7 +27,7 @@ export class Box
         }
 
         this.elm = document.createElement("div");
-        this.title=title;
+        this.text=text;
 
         this.elm.onmouseover=(ev)=>{return this.onMouseOver(ev);}
         this.elm.onmouseout=(ev)=>{this.onMouseOut(ev);}
@@ -34,18 +35,27 @@ export class Box
         this.elm.className="zs_box";
         this.elm.classList.add('lvl'+this.level);
 
+        if(type)
+        {
+            this.elm.classList.add("zs_box_"+type)
+            this.type=type;
+        }
+
         //this.titlewrap=$.create("div","zs_box_header");
-        //this.titlewrap.appendChild(this.title);
+        //this.titlewrap.appendChild(this.text);
         this.elmTitle=$.create("div");
 
-        this.elmTitle.textContent=title;
-        this.elmTitle.onclick=(ev)=>{return this.onTitleClick(ev);}
+        this.elmTitle.textContent=text;
+        this.elmTitle.onclick=(ev)=>{return this.onTextClick(ev);}
         this.elm.appendChild(this.elmTitle);
+
 
         this.setShow(shown);
         this.setExpand(expand);
 
     }
+    onShow(shown:boolean)  {  }
+    lazyLoadImages() {};
     private setShow(shown:boolean)
     {
         this.shown=shown;
@@ -57,6 +67,7 @@ export class Box
         {
             this.elm.classList.add('boxhide');
         }
+        this.onShow(shown);
     }
     private setExpand(expanded:boolean) : boolean //return true if changed
     {
@@ -94,9 +105,9 @@ export class Box
         this.expand(!this.expanded);
 
     }
-    onTitleClick(ev:MouseEvent)
+    onTextClick(ev:MouseEvent)
     {
-        console.log("onTitleClick");
+        console.log("onTextClick");
         //ev.stopPropagation();
         //this.toggle();
         return false;
@@ -120,15 +131,37 @@ export class Box
 export class BoxList extends Box
 {
     items: Box[]=[];
-    constructor(parent:BoxList,title: string,shown=true,expanded=false,id:string=null) {
-        super(parent,title,shown,expanded);
+    elmWrap : HTMLDivElement;
+    statement : BoxStatement=null;
+
+    constructor(parent:BoxList, type:string,
+                text: string,htmlStatement:string,
+                shown=true,expanded=false,id:string=null) {
+        super(parent,type,text,shown,expanded);
+
+
+        this.elmWrap=$.create("div","zs_box_list_wrap");
+        if(htmlStatement)
+        {
+
+            this.statement=new BoxStatement(this,htmlStatement);
+            this.elm.appendChild(this.statement.elm);
+
+        }
 
         this.elm.classList.add("zs_box_list");
         this.elmTitle.className="zs_box_header";
         this.elmTitle.classList.add('header'+this.level)
         if(id)
             this.elm.id=id;
+        this.elm.appendChild(this.elmWrap);
 
+    }
+    lazyLoadImages()
+    {
+        this.items.forEach(
+            (box)=> box.lazyLoadImages()
+        );
     }
     add(item:Box)
     {
@@ -138,7 +171,7 @@ export class BoxList extends Box
         }
         else
         {
-            if(this.items.length==0)
+            if(item.type=="cover")
             {
                 item.preview=true;
                 item.show(true);
@@ -148,7 +181,7 @@ export class BoxList extends Box
         }
 
         this.items.push(item);
-        this.elm.appendChild(item.elm);
+        this.elmWrap.appendChild(item.elm);
     }
     expandChildren (expanded:boolean):boolean //return true if ANY changed
     {
@@ -164,19 +197,19 @@ export class BoxList extends Box
     }
     showChildren (expanded:boolean)
     {
+        let i_cover=0;
         this.items.forEach(
             (box,i)=>
             {
-                box.preview=((i==0)&&(!expanded));
-                if(i)
+                if(box.type=="cover")
                 {
-                    box.show(expanded)
+                    box.preview=!expanded;
+                    box.show(true);
+
                 }
                 else
                 {
-                    box.show(true);
-
-
+                    box.show(expanded);
                 }
             }
         );
@@ -187,7 +220,7 @@ export class BoxList extends Box
         this.showChildren(expanded);
         return changed;
     }
-    onTitleClick(ev:MouseEvent)
+    onTextClick(ev:MouseEvent)
     {
         ev.stopPropagation();
 
@@ -201,7 +234,7 @@ export class BoxList extends Box
         this.toggle();
 
 
-        console.log("onTitleClick");
+        console.log("onTextClick");
         //ev.stopPropagation();
         //this.toggle();
         return false;
@@ -210,7 +243,7 @@ export class BoxList extends Box
     {
         ev.stopPropagation();
 
-        console.log("BoxList click",this.level,this.title);
+        console.log("BoxList click",this.level,this.text);
         if(this.parent?.onClick(ev)) return true;
         if(this.expanded) return false;
 
@@ -234,25 +267,58 @@ export class BoxList extends Box
         return true;
     }
 }
+export class BoxProject extends BoxList
+{
+    constructor(parent:BoxList, type:string,
+                text: string,htmlStatement:string,
+                shown=true,expanded=false,id:string=null) {
+        super(parent,type,text,htmlStatement,shown,expanded,id);
+    }
+}
+export class BoxGroup extends BoxList
+{
+    constructor(parent:BoxList, type:string,
+                text: string,htmlStatement:string,
+                shown=true,expanded=false,id:string=null) {
+        super(parent,type,text,htmlStatement,shown,expanded,id);
+    }
+}
 export class BoxImage extends Box
 {
-    elmTitle : HTMLDivElement;
     img : HTMLImageElement;
     imgUrl:string;
+    thumbUrl:string;
 
 
-    constructor(parent:BoxList,title: string,url:string,thumbnail:string,shown=true) {
-        super(parent,title);
+    constructor(parent:BoxList,type:string,text: string,url:string,thumbnail:string,
+
+                shown=true) {
+        super(parent,type,text);
         this.img=$.create("img");
         this.imgUrl=url;
-        this.img.src=thumbnail;
-        this.img.title=title;
+        this.thumbUrl=url;
+        if(shown)
+            this.img.src= thumbnail;
+        this.img.title=text;
         this.elm.classList.add("zs_box_image");
         this.elm.appendChild(this.img);
         this.elmTitle.className="image_label";
+        // re-appending moves the text under the image
         this.elm.appendChild(this.elmTitle);
 
     }
+
+    lazyLoadImages()
+    {
+        if(this.img && (this.img.src==""))
+            this.img.src=this.thumbUrl;
+    }
+    onShow(shown:boolean)
+    {
+        if(shown && this.img && (this.img.src==""))
+            this.img.src=this.thumbUrl;
+    }
+
     onClick(ev:MouseEvent)
     {
         ev.stopPropagation();
@@ -288,17 +354,13 @@ export class BoxImage extends Box
     }
 
 }
-
-export class BoxText extends Box
+export class BoxNews extends Box
 {
-    elmText : HTMLDivElement;
-    imgUrl:string;
 
-    constructor(parent:BoxList,title: string,url:string,thumbnail:string,shown=true) {
-        super(parent,title);
-        this.elmText=$.create("div");
-        this.elm.classList.add("zs_box_text");
-        this.elm.appendChild(this.elmText);
+    constructor(parent:BoxList,html: string,shown=true) {
+        super(parent,"news","");
+        this.elmTitle.innerHTML=html;
+        this.elm.classList.add("zs_box_statement");
 
     }
     onClick(ev:MouseEvent)
@@ -306,8 +368,50 @@ export class BoxText extends Box
         if(this.preview)
             return false;
 
-        console.log("BoxImage click");
+        console.log("BoxStatement click");
         ev.stopPropagation();
+
+
+        return false;
+    }
+
+}
+
+export class BoxStatement extends Box
+{
+    elmSeeMore: HTMLDivElement;
+    constructor(parent:BoxList,html: string,shown=true) {
+        super(parent,null,"");
+        this.elmTitle.innerHTML=html;
+        this.elm.classList.add("zs_box_statement");
+        this.elmSeeMore=$.create("div","zs_box_readmore");
+
+        this.elmSeeMore.textContent="Read More";
+        this.elm.prepend(this.elmSeeMore)
+    }
+    onClick(ev:MouseEvent)
+    {
+        ev.stopPropagation();
+
+        console.log("BoxStatement click");
+
+        this.toggle();
+        if(this.expanded)
+        {
+            this.elmSeeMore.textContent="Show Less";
+            setTimeout(() => {
+                //this.elm.scr
+                const y = this.elm.getBoundingClientRect().top + window.scrollY;
+                const offset=this.parent.elmTitle.getBoundingClientRect().bottom;
+                window.scrollTo({behavior:"smooth",top:y-offset})
+                //this.elm.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+                //this.img.scrollIntoView(true);
+            },300);
+        }
+        else {
+            this.elmSeeMore.textContent="Read More";
+
+        }
 
 
         return false;
