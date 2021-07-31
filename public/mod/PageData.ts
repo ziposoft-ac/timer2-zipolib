@@ -11,7 +11,9 @@ export interface Pwa
 
 export class PageData
 {
-
+    info={
+        ip:""
+    }
 
 }
 

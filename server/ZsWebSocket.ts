@@ -1,9 +1,12 @@
+//server side
+import WebSocket from 'ws';
 
-export class ZsWebsocket {
+
+export class ZsWebSocket {
     status: string = "closed";
     url: string = "";
     protocols: string[] = [];
-    retry: boolean = false;
+    retry: boolean = true;
     socket_di: WebSocket;
 
     constructor() {
@@ -16,7 +19,7 @@ export class ZsWebsocket {
         this.url = "ws://" + host + ":" + port;
         this.socket_di = null;
         this.protocols = protocols;
-        this.retry = false;
+        this.retry = true;
 
         this.on_connect_retry();
         console.log("trying to connect...");
@@ -65,7 +68,10 @@ export class ZsWebsocket {
     }
     send_txt(msg) {
         if(this.status!="connected")
-            return;
+        {
+            console.log("bad send. ws not connected");
+
+        }
         try {
 
             this.socket_di.send(msg);
@@ -111,25 +117,26 @@ export class ZsWebsocket {
 
         try
         {
-            this.socket_di.onerror = function (e) {
+            this.socket_di.onerror =  (e)=> {
                 console.log("WS connect error:",e);
+                this.retry=false;
             }
             this.socket_di.onopen = function () {
+                self.set_status("connected");
 
                 self.on_connect();
-                self.set_status("connected");
 
                 console.log("connected");
             }
 
             this.socket_di.onmessage = function got_packet(msg) {
 
-                self.on_rx(msg.data);
+                self.on_rx(msg.data.toString());
             }
 
             this.socket_di.onclose = function (e) {
                 self.on_disconnect();
-                e.stopPropagation();
+                //if(e)              e.stopPropagation();
                 if (self.retry) {
                     self.set_status("trying");
 

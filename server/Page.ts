@@ -26,7 +26,7 @@ export class PageServer
     log: Logger=new Logger();
     debug=false;
     googleTagId : string=null;
-    staticData : PageData={};
+    staticData : PageData=new PageData();
     fetchVersion=gFetchversion;
     private redirectUrl:string=null;
 
@@ -56,6 +56,8 @@ export class PageServer
             this.debug=props.req.cookies.debug ?? false;
             console.log("this.debug:",this.debug);
             this.debug=true;
+            let ip = <string>this.props.req.headers['x-forwarded-for'] || this.props.req.socket.remoteAddress;
+            this.staticData.info.ip=ip;
 
         }
 
@@ -108,7 +110,9 @@ export class PageServer
         }
         for(let mod of this.modules)
         {
-            h+=`<script type="module" src="${mod}.js?v=${this.fetchVersion}"></script>`;
+            //h+=`<script type="module" src="${mod}.js?v=${this.fetchVersion}"></script>`;
+            //can't add version, because it will cause duplicate loads from import statements
+            h+=`<script type="module" src="${mod}.js"></script>`;
         }
         for(let name in this.imports)
         {
