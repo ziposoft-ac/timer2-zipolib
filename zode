@@ -1,0 +1,22 @@
+#!/bin/bash
+echo "Zode V1"
+if [ "$#" -lt 1 ]; then
+    echo "need script name"
+    exit;
+fi
+zipo_root=$HOME/www/zipo.ts
+proj_root_default=$HOME/www/ziposoft
+proj_root=
+findup () {
+  path=$(pwd)
+  while [[ "$path" != "" && ! -e "$path/root.json" ]]; do
+    path=${path%/*}
+  done
+  proj_root="${path:-$zipo_root_default}"
+}
+findup
+
+echo "proj_root=$proj_root"
+
+ZIPO_ROOT=$zipo_root PROJ_ROOT=$proj_root node  --loader $zipo_root/custom_loader.js "$@"
+
