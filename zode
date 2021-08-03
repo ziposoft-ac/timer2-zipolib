@@ -1,10 +1,10 @@
 #!/bin/bash
-echo "Zode V1"
+echo "Zode V2"
 if [ "$#" -lt 1 ]; then
     echo "need script name"
     exit;
 fi
-zipo_root=$HOME/www/zipo.ts
+zipo_root=$HOME/www/zipolib/
 proj_root_default=$HOME/www/ziposoft
 proj_root=
 findup () {
