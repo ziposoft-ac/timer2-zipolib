@@ -1,13 +1,13 @@
 
-export class ZsWebsocket {
+export class ZsWebSocket {
     status: string = "closed";
     url: string = "";
     protocols: string[] = [];
     retry: boolean = false;
     socket_di: WebSocket;
 
-    constructor() {
-
+    constructor( retry=false) {
+        this.retry=retry
     }
 
     connect(host: string, port: number, protocols: string[]=[]): string {

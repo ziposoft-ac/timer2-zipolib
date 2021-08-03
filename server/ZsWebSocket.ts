@@ -1,21 +1,28 @@
 //server side
 import WebSocket from 'ws';
 
-
+export enum State
+{
+    closed="closed",
+    connected="connected",
+    trying="trying",
+    error="error"
+}
 export class ZsWebSocket {
-    status: string = "closed";
+
+    state : State=State.closed;
     url: string = "";
     protocols: string[] = [];
     retry: boolean = true;
     socket_di: WebSocket;
 
-    constructor() {
-
+    constructor( retry=false) {
+        this.retry=retry
     }
 
     connect(host: string, port: number, protocols: string[]=[]): string {
-        if(this.status!="closed")
-            return this.status;
+        if(this.state!=State.closed)
+            return "already open";
         this.url = "ws://" + host + ":" + port;
         this.socket_di = null;
         this.protocols = protocols;
@@ -23,7 +30,7 @@ export class ZsWebSocket {
 
         this.on_connect_retry();
         console.log("trying to connect...");
-        this.set_status("trying");
+        this.set_state(State.trying);
 
         return this.reconnect();
     }
@@ -44,20 +51,21 @@ export class ZsWebSocket {
     on_rx(msg : string) {
         console.log("rx:" + msg);
     }
-    on_status_changed(status:string)
+    //for updating visual status
+    on_state_changed(state:State)
     {
 
     }
-    set_status(status:string)
+    set_state(state:State)
     {
-        this.status = status;
-        this.on_status_changed(status);
+        this.state = state;
+        this.on_state_changed(state);
     }
     connectionCheck() {
         if (this.retry) {
             this.reconnect();
         } else {
-            this.set_status("closed");
+            this.set_state(State.closed);
         }
     }
     send_json(obj)
@@ -67,7 +75,7 @@ export class ZsWebSocket {
 
     }
     send_txt(msg) {
-        if(this.status!="connected")
+        if(this.state!=State.connected)
         {
             console.log("bad send. ws not connected");
 
@@ -94,9 +102,9 @@ export class ZsWebSocket {
     }
 
     disconnect() {
-        if(this.status=="closed")
-            return this.status;
-        this.set_status("closed");
+        if(this.state==State.closed)
+            return ;
+        this.set_state(State.closed);
 
         let status_code = 3000;
         let reason_closing = "shutdown";
@@ -109,20 +117,29 @@ export class ZsWebSocket {
 
         try {
             this.socket_di = new WebSocket(this.url, this.protocols);
-        } catch (exception) {
-            console.log('Error' + exception);
-            return 'Error' + exception;
+        } catch (e) {
+            //
+            if(e?.error.code=='ECONNREFUSED')
+            {
+                return 'trying...';
+            }
+            console.log('Error:' + e);
+            return 'Error' + e;
         }
 
 
         try
         {
             this.socket_di.onerror =  (e)=> {
+                if(e?.error.code=='ECONNREFUSED')
+                {
+                    return 'trying...';
+                }
                 console.log("WS connect error:",e);
                 this.retry=false;
             }
             this.socket_di.onopen = function () {
-                self.set_status("connected");
+                self.set_state(State.connected);
 
                 self.on_connect();
 
@@ -135,16 +152,22 @@ export class ZsWebSocket {
             }
 
             this.socket_di.onclose = function (e) {
-                self.on_disconnect();
+                //this is called while trying to connect, and
+                //when connection is lost
+                if(self.state==State.connected)
+                {
+                    self.on_disconnect();
+
+                }
                 //if(e)              e.stopPropagation();
                 if (self.retry) {
-                    self.set_status("trying");
+                    self.set_state(State.trying);
 
                     setTimeout(function () {
                         self.connectionCheck();
-                    }, 100);
+                    }, 250);
                 } else {
-                    self.set_status("closed");
+                    self.set_state(State.closed);
 
                 }
 
@@ -154,6 +177,10 @@ export class ZsWebSocket {
             console.log('Error' + exception);
             return 'Error' + exception;
         }
-        return this.status;
+        return this.state;
     }
 };
+export namespace ZsWebSocket
+{
+
+}

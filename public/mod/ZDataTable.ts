@@ -49,6 +49,11 @@ export class ZDataTable
         let h=`<div>${json}</div>`;
         return h;
     }
+    add(data:object)
+    {
+        this.dt.row.add(data);
+        this.dt.draw(false);
+    }
     refreshData(data: object[])
     {
         this.dt.clear();
