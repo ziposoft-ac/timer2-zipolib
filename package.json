@@ -26,6 +26,7 @@
     "@types/node-fetch": "^2.5.8",
     "cheerio": "^1.0.0-rc.5",
     "@types/cheerio": "^0.22.23",
-    "ws": "^7.5.3"
+    "ws": "^7.5.3",
+    "source-map-support": "^0.5.19"
   }
 }
