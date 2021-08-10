@@ -1,3 +1,4 @@
+import {MenuSelect, MenuSelectItem} from "/zs_client/MenuClient";
 
 
 export enum Type {
@@ -6,6 +7,8 @@ export enum Type {
     MenuBar = 'MenuBar',
     MenuFunc = 'MenuFunc',
     MenuBool = 'MenuBool',
+    MenuSelect = 'MenuSelect',
+    MenuSelectItem = 'MenuSelectItem',
     MenuBoolCookie = 'MenuBoolCookie',
 }
 export interface IBase
@@ -14,13 +17,27 @@ export interface IBase
     id? : string;
     label : string;
     getLabel? : ()=>string;
-
+    key?: string;
+    getValue? : ()=> any;
+    setValue? : (any)=> void;
 
 }
-export interface ISelect extends IBase {
+
+export interface DataStore
+{
+    set(key:string,val);
+    get(key:string) : any;
+}
+
+export interface IInput extends IBase {
+    inputType?: string;
+
+}
+export interface ISelect extends IInput {
     options : Object;
-    default: string;
-    onChange? :  (value)=> any;
+
+}
+export interface IBool extends IInput {
 
 }
 export interface ISelectVal extends IBase {
@@ -42,25 +59,15 @@ export interface IPageFunc extends IBase {
 }
 export interface IMenu extends IBase {
     items?: IBase[];
+    dataSetKey?(key:string,val:any);
+    dataGetKey?(key:string):any;
 }
 export interface IMenuBar extends IMenu {
 }
-export interface IEdit<T> extends IBase {
-   // onChange :  (value:T)=> any;
-    inputType?: string;
-    getValue? : ()=> T;
-    setValue? : (T)=> void;
+
+export interface INumberEdit extends IInput {
+    decimalPlaces?: number;
 }
-export interface INumberEdit extends IEdit<number> {
-    decimalPlaces: number;
-}
-export interface ITextEdit extends  IEdit<string> {
-}
-export interface IBool extends IBase {
-    onChange? :  (value)=> any;
-    default: boolean;
+export interface ITextEdit extends  IInput {
 }
 
-export interface IBoolCookie extends IBool {
-    cookeName:string;
-}

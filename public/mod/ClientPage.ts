@@ -56,17 +56,20 @@ export class PageClientT<STATIC_DATA extends PageData> {
         this.staticData=staticData;
         //Object.assign(this.staticData, staticData);
         window["page"] = this;
+        this.storageName = window.location.pathname;
         window.onload = () => {
+
+
             this.run();
         }
-        this.storageName = window.location.pathname;
         this.elm_main = $.id('main');
         //console.log("client page constructor");
 
     }
 
     run() {
-        console.log("client page default run");
+        console.log("run PageClientT");
+        this.storageLoad();
     }
 
 }
@@ -86,7 +89,13 @@ export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> ex
         constructor(staticData: Partial<STATIC_DATA>) {
             console.log("PageClientMenu constructor");
             super(staticData);
-            this.menubar =new MenuBar(staticData.menubar);
+            this.menubar =new MenuBar(this.staticData.menubar);
+
+        }
+        run() {
+            super.run();
+            console.log("run PageClientMenuT");
+            this.menubar.updateDisplay();
         }
     }
 

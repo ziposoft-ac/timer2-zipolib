@@ -1,5 +1,4 @@
 //server side
-import WebSocket from 'ws';
 
 export enum State
 {
@@ -15,11 +14,13 @@ export class ZsWebSocket {
     protocols: string[] = [];
     retry: boolean = true;
     socket_di: WebSocket;
-
+    name: string="";
     constructor( retry=false) {
         this.retry=retry
+        if(retry)
+            this.name="what the fuck?";
     }
-
+    isConnected() { return this.state==State.connected}
     connect(host: string, port: number, protocols: string[]=[]): string {
         if(this.state!=State.closed)
             return "already open";
@@ -100,7 +101,6 @@ export class ZsWebSocket {
 
         }
     }
-
     disconnect() {
         if(this.state==State.closed)
             return ;
@@ -123,7 +123,7 @@ export class ZsWebSocket {
             {
                 return 'trying...';
             }
-            console.log('Error:' + e);
+            //console.log('Error:' + e);
             return 'Error' + e;
         }
 
@@ -131,14 +131,14 @@ export class ZsWebSocket {
         try
         {
             this.socket_di.onerror =  (e)=> {
-                if(e?.error.code=='ECONNREFUSED')
+                if(e['error']?.code=='ECONNREFUSED')
                 {
                     return 'trying...';
                 }
-                console.log("WS connect error:",e);
-                this.retry=false;
+                //console.log("WS connect error:",e);
+                //this.retry=false;
             }
-            this.socket_di.onopen = function () {
+            this.socket_di.onopen =  ()=> {
                 self.set_state(State.connected);
 
                 self.on_connect();
@@ -151,24 +151,23 @@ export class ZsWebSocket {
                 self.on_rx(msg.data.toString());
             }
 
-            this.socket_di.onclose = function (e) {
+            this.socket_di.onclose =  (e) =>{
                 //this is called while trying to connect, and
                 //when connection is lost
-                if(self.state==State.connected)
+                if(this.state==State.connected)
                 {
-                    self.on_disconnect();
+                    this.on_disconnect();
 
                 }
                 //if(e)              e.stopPropagation();
-                if (self.retry) {
-                    self.set_state(State.trying);
+                if (this.retry) {
+                    this.set_state(State.trying);
 
-                    setTimeout(function () {
-                        self.connectionCheck();
+                    setTimeout( ()=> {
+                        this.connectionCheck();
                     }, 250);
                 } else {
-                    self.set_state(State.closed);
-
+                    this.set_state(State.closed);
                 }
 
             }

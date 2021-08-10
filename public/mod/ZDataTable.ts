@@ -9,12 +9,15 @@ export class ZDataTable
 {
     table_id : string;
     rowContext: Map<any, RowContext> =null;
+    numRows=0;
     options_dt : DataTables.Settings={
         dom: 't',
         pageLength: -1,
         lengthMenu: [[25, 50, 75, -1], [25, 50, 75, "All"]],
         columns: [            ],
-        data : null
+        data : null,
+        order: [[0,"desc"]],
+
     };
     options_zt ={
         enableRowChild: false,
@@ -52,6 +55,14 @@ export class ZDataTable
     add(data:object)
     {
         this.dt.row.add(data);
+        this.numRows++;
+        let num_rows=this.dt.rows( ).count()
+
+        if(this.numRows>10)
+        {
+            this.dt.row(0).remove();
+            this.numRows--;
+        }
         this.dt.draw(false);
     }
     refreshData(data: object[])

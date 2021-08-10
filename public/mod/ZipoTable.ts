@@ -1,94 +1,56 @@
-import * as DO from "./zb/DataObj.js";
-import {DataObj, DataObjMeta, DoConT, getMeta} from "./zb/DataObj.js";
 
+export interface Col
+{
+    name: string;
+}
+export interface Config
+{
+    id:string;
+    columns: Record<string, Col>;
+}
 export class ZipoTable
 {
-    htable : HTMLTableElement;
-    data : DO.DataObj [];
-    meta : DataObjMeta;
-    constructor(id:string=null) {
-        if(id)
-            this.htable=<HTMLTableElement>document.getElementById(id);
+    ht : HTMLTableElement;
+    header:HTMLTableRowElement;
+    body:HTMLTableSectionElement;
+    foot:HTMLTableSectionElement;
+    columns: Record<string, Col>={};
+
+    constructor(public conf:Partial<Config>) {
+        this.init(conf);
+    }
+    init( conf:Partial<Config>)
+    {
+        if(conf.id)
+            this.ht=<HTMLTableElement>document.getElementById(conf.id);
         else
-            this.htable=document.createElement('table');
-    }
-    show(flds:DO.FieldSet ,arr: object[]  )
-    {
-
-
-        let h='<thead><tr>';
-        for (const f of flds) {
-            if(f.props.showList)
-            {
-                h+=`<th>${f.getDisplayName()}</th>`;
-            }
-        }
-        h+='</tr></thead>';
-        for(let obj of arr)
+            this.ht=document.createElement('table');
+        this.ht.classList.add('ZipoTable');
+        this.header=this.ht.createTHead().insertRow();
+        this.body=this.ht.createTBody();
+        this.foot=this.ht.createTFoot();
+        if(conf.columns)
         {
-            h+="<tr>";
-            for (const f of flds)  {
-                if(f.props.showList)
-                {
-                    let val=f.getDisplayString(obj,null);
-                    h+=`<td>${val}</td>`;
-                }
-            }
-            h+="</tr>";
-
-        }
-        this.htable.innerHTML=h;
-    }
-    show1(meta:DataObjMeta ,arr: object[]  )
-    {
-        this.meta=meta;
-        let flds=this.meta.fields;
-
-
-        let h='<thead><tr>';
-        for (const f of flds) {
-            if(f.props.showList)
+            this.columns=conf.columns;
+            for(let id in conf.columns)
             {
-                h+=`<th>${f.getDisplayName()}</th>`;
+                let col=conf.columns[id];
+                let th=document.createElement('th');
+                this.header.appendChild(th).innerText=col.name;
+
             }
-        }
-        h+='</tr></thead>';
-        for(let obj of arr)
-        {
-            h+="<tr>";
-            for (const f of flds)  {
-                if(f.props.showList)
-                {
-                    let val=f.getDisplayString(obj,null);
-                    h+=`<td>${val}</td>`;
-                }
-            }
-            h+="</tr>";
 
         }
-        this.htable.innerHTML=h;
     }
-    showType(classRef:typeof DataObj ,arr: object[]  )
+    addRow(arr: (string|number)[])
     {
-        // @ts-ignore
-        let ctor=classRef.prototype.constructor;
-        // @ts-ignore
-        this.show(getMeta(ctor));
-    }
-    displaydata(data: object[])
-    {
-        let h='';
-        for(let row of data)
-        {
-            h+='<tr>';
-            for(let d in row)
-            {
-                let val=row[d];
-                h+=`<td>${val}</td>`;
-            }
-            h+='</tr>';
-        }
-        this.htable.innerHTML=h;
+        let row=this.body.insertRow();
 
+        for (const s of arr)  {
+            let cell=row.insertCell();
+            cell.innerText=s.toString();
+
+        }
     }
+
 }

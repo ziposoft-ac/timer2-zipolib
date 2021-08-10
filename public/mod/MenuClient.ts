@@ -3,6 +3,7 @@
 import * as IM from "./IMenu.js";
 import Cookies from "./js.cookie.js";
 import {PageClientMenu, PageClientMenuT} from "./ClientPage.js"
+import {IInput} from "./IMenu.js";
 console.log("MenuClient module");
 
 
@@ -10,10 +11,14 @@ abstract class MenuBase
 {
     label:string;
     id:string;
+    parent:Menu;
     constructor(
         public props: IM.IBase) {
+        if(!props.key)
+            props.key="";
         this.id=props.id;
         this.label=props.label;
+
     }
     render() : HTMLElement
     {
@@ -32,7 +37,18 @@ abstract class MenuBase
     onClick(ev:MouseEvent) {}
     onMouseOver(ev:MouseEvent)  { }
     onMouseOut(ev:MouseEvent) {  }
-
+    dataSet(val)
+    {
+        if(this.props.setValue)
+            this.props.setValue(val);
+        else
+            this.parent.dataSetKey(this.props.key,val);
+    }
+    dataGet() : any{
+        if(this.props.getValue)
+            return this.props.getValue();
+        return  this.parent.dataGetKey(this.props.key);
+    }
     clientCreateItems( parent : MenuBase,item_list:  IM.IBase[],level:number=0)
     {
         for( let item of item_list )
@@ -95,16 +111,31 @@ export class Menu extends MenuBase
         this.menu_elm=new ElmMenu(this);
         if(props.items) // props for
             this.clientCreateItems(this,props.items);
+        if(props.dataGetKey) this.dataGetKey=props.dataGetKey;
+        if(props.dataSetKey) this.dataSetKey=props.dataSetKey;
     }
+    dataSetKey(key:string,val:any){}
+    dataGetKey(key:string):any { return null; }
     updateDisplay()
     {
         super.updateDisplay();
         for(let i of this.children)
-            i.updateDisplay();
+        {
+            try {
+                i.updateDisplay();
+
+            }
+            catch (e)
+            {
+                console.log(e);
+            }
+
+        }
     }
     addItem(item : MenuBase)
     {
         this.children.push(item);
+        item.parent=this;
         let child_elm=item.render();
         this.menu_elm.div.appendChild(child_elm);
     }
@@ -173,42 +204,50 @@ export class MenuSelectItem extends MenuItem
         this.elm.setText(this.props.label+(selected ? "✓":" "));
     }
 }
+
+
+
 export class MenuSelect extends Menu
 {
     currentSelection : MenuSelectItem;
     options : object;
-    value : any;
     baseName: string;
     props: IM.ISelect;
     selectItems ={};
-    setValue(key)
+
+    updateDisplay()
     {
-        let item=this.selectItems[key];
+        let key=this.dataGet();
+
+        if(this.currentSelection)
+            this.currentSelection.select(false);
+        let item=this.selectItems[key]
+        let selectLabel="none";
         if(item)
         {
-            this.setItem(item);
+            item.select(true);
+            this.currentSelection=item;
+            selectLabel=this.currentSelection.label;
         }
+
+
+        let label=(this.props.getLabel?
+            this.props.getLabel() :
+            this.baseName+" : "+selectLabel);
+
+        this.label=label;
+        this.menu_elm.name=label;
+        this.menu_elm.a.text=label;
     }
     callbackSelect(item:MenuSelectItem)
     {
-        if(this.props.onChange)
-            this.props.onChange(item.value);
-        this.setItem(item);
-    }
-    setItem(item:MenuSelectItem)
-    {
-        if(this.currentSelection)
-            this.currentSelection.select(false);
-        item.select(true);
-        this.currentSelection=item;
-        this.value=item.value;
-        this.label= this.baseName+" : "+item.label;
-        this.menu_elm.name=this.label;
-        this.menu_elm.a.text=this.label;
-
+        this.dataSet(item.value);
+        this.updateDisplay();
     }
     constructor(props: IM.ISelect ) {
         super(props);
+
+
         this.menu_elm=new ElmMenu(this);
         this.options=props.options;
         this.baseName=this.label;
@@ -218,14 +257,16 @@ export class MenuSelect extends Menu
             this.addItem(item);
             this.selectItems[key]=item;
         }
-        this.setValue(props.default);
     }
 
 }
 export class MenuInput extends MenuItem
 {
+    props : IM.IInput;
+
     editbox: HTMLInputElement;
     editMode=false;
+
     updateDisplay()
     {
         let label=(this.props.getLabel?this.props.getLabel(): this.props.label);
@@ -241,9 +282,7 @@ export class MenuInput extends MenuItem
         this.elm.classList.add("textedit");
         this.elm.appendElm(eb);
         eb.onchange=(event)=>{this.onChange(event) };
-        this.updateDisplay();
     }
-    value : string="default";
     onChange(event)
     {
     }
@@ -256,18 +295,16 @@ export class MenuTextEdit extends MenuInput
     constructor(props : IM.ITextEdit) {
         super(props);
         this.editbox.type="label";
-        this.updateDisplay();
-
     }
+
     updateDisplay()
     {
         super.updateDisplay();
-        this.editbox.value=this.props.getValue().toString();
+        this.editbox.value=this.dataGet();
     }
     onChange(event)
     {
-        this.value=this.editbox.value;
-        this.props.setValue(this.value);
+        this.dataSet(this.editbox.value);
 
     }
 
@@ -278,19 +315,26 @@ export class MenuNumberEdit extends MenuInput
     updateDisplay()
     {
         super.updateDisplay();
-        this.editbox.value=this.props.getValue().toFixed(this.props.decimalPlaces);
+        let value=this.dataGet();
+        if (typeof value === 'number') {
+            value=value.toFixed(this.props.decimalPlaces);
+        }
+        this.editbox.value=value;
     }
 
     props : IM.INumberEdit;
     constructor(props : IM.INumberEdit) {
         super(props);
+        if(!props.decimalPlaces)
+            props.decimalPlaces=0;
+
         this.editbox.type="number";
-        this.updateDisplay();
     }
     onChange(event)
     {
         let value=parseInt(this.editbox.value);
-        this.props.setValue(value);
+        this.dataSet(value);
+
     }
 }
 
@@ -300,20 +344,20 @@ export class MenuBool extends MenuItem
     props : IM.IBool;
     constructor(props : IM.IBool) {
         super(props);
-        this.state=props.default;
-        this.updateCheckmark();
     }
     state : boolean=false;
-    updateCheckmark()
+    updateDisplay()
     {
-        this.elm.setText(this.label+(this.state ? "✓":" "));
+        super.updateDisplay();
+        let state=this.dataGet();
+        this.elm.setText(this.label+(state ? "✓":" "));
     }
     onClick(ev:MouseEvent)
     {
-        this.state=!this.state;
-        this.props.onChange(this.state);
+        let state=!this.dataGet();
+        this.dataSet(state);
+        this.updateDisplay();
 
-        this.updateCheckmark();
     }
 
 }
@@ -330,31 +374,17 @@ export class MenuLink extends MenuItem
 
 export class MenuBoolCookie extends MenuBool
 {
-    cookeName:string;
-    constructor(props : IM.IBoolCookie) {
-        super(props);
-        this.cookeName=props.cookeName;
-
-        this.state=Cookies.get(this.cookeName)!=undefined ;
-        console.log("MenuBoolCookie construct: ",this.state,props.cookeName);
-        this.updateCheckmark();
-    }
-    onClick(ev:MouseEvent)
+    dataSet(val)
     {
-        this.state=!this.state;
-
-        this.updateCheckmark();
-        if(this.state)
-            Cookies.set(this.cookeName,"true");
+        if(val)
+            Cookies.set(this.props.key,"true");
         else
         {
-            console.log("MenuBoolCookie remove");
-
-            Cookies.remove(this.cookeName);
-
+            Cookies.remove(this.props.key);
         }
-
-        console.log("MenuBoolCookie: ",this.state,this.cookeName);
+    }
+    dataGet() : any{
+        return Cookies.get(this.props.key)!=undefined ;
 
     }
 

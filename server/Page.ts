@@ -10,7 +10,8 @@ import {Logger} from "/zs_client/Logger";
 const  gFetchversion=Date.now();
 export interface PageProps
 {
-
+    title?:string;
+    module?:string;
     req : express.Request;
     main? : string ;
 }
