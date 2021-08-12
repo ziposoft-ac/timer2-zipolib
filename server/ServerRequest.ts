@@ -63,13 +63,18 @@ export class ServerRequestT<P,D> extends ServerRequest
     get data() : D { return this.out.data }
     in:AjaxParamsT<P>;
     out:AjaxResponseT<D>;
-    reqT :  ReqT<P,D>;
+    //reqT :  ReqT<P,D>;
+    req: AjaxRequest<P,D>;
     constructor(ajaxReqT: ReqT<P,D> ) {
         super( );
         this.requestId=ajaxReqT.name;
-        this.in=ajaxReqT["pT"]();
-        this.out=ajaxReqT["dT"]();
-        this.reqT=ajaxReqT;
+        //this.in=ajaxReqT["pT"]();
+        //this.out=ajaxReqT["dT"]();
+        let req=new ajaxReqT();
+        this.in=req.in;
+        this.out=req.out;
+        this.req=req;
+        //this.reqT=ajaxReqT;
     }
 }
 

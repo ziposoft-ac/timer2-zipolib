@@ -1,4 +1,4 @@
-
+import WebSocket from "ws";
 export enum State
 {
     closed="closed",
@@ -117,11 +117,11 @@ export class ZsWebSocket {
         try {
             this.socket_di = new WebSocket(this.url, this.protocols);
         } catch (e) {
-            /*
+
             if(e?.error.code=='ECONNREFUSED')
             {
                 return 'trying...';
-            }*/
+            }
             //console.log('Error:' + e);
             return 'Error' + e;
         }
@@ -178,7 +178,5 @@ export class ZsWebSocket {
         return this.state;
     }
 };
-export namespace ZsWebSocket
-{
+export default ZsWebSocket
 
-}

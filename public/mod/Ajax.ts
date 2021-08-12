@@ -45,7 +45,13 @@ function makeResponse<DATA>(dataT :   (new () => DATA))
 {
     return new AjaxResponseT<DATA>(dataT);
 }
+enum ReqLevel
+{
+    public,
+    user,
+    admin,
 
+}
 export class AjaxRequest<PARAMS,DATA>
 {
 
@@ -54,9 +60,15 @@ export class AjaxRequest<PARAMS,DATA>
 }
 export function  Req<PARAMS,DATA>(paramT :   (new () => PARAMS),dataT :   (new () => DATA)  )
 {
-    let cl= class extends AjaxRequest<PARAMS,DATA>{ };
-    cl["pT"]=()=>makeParam(paramT);
-    cl["dT"]=()=>makeResponse(dataT);
+    let cl= class extends AjaxRequest<PARAMS,DATA>{
+        constructor() {
+            super();
+            this.in=new AjaxParamsT<PARAMS>(paramT);
+            this.out=new  AjaxResponseT<DATA>(dataT);
+        }
+    };
+    //cl["pT"]=()=>makeParam(paramT);
+    //cl["dT"]=()=>makeResponse(dataT);
       return cl;
 }
 export type ReqT<P,D>= (new () => AjaxRequest<P,D>);

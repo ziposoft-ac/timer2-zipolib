@@ -9,15 +9,17 @@ if (typeof window === 'undefined')
 
  */
 
-export class ClientRequestT<PARAMS,DATA> extends AjaxRequest<PARAMS,DATA>
+export class ClientRequestT<PARAMS,DATA>
 {
 
     path:string="/";
+    req: AjaxRequest<PARAMS,DATA>;
     requestId: string="none";
-    constructor(reqT: ReqT<PARAMS,DATA>,path="/") {
-        super();
-        this.in=reqT["pT"]();
-        this.out=reqT["dT"]();
+    get in() { return this.req.in;}
+    get out() { return this.req.out;}
+    constructor(public reqT: ReqT<PARAMS,DATA>,
+                path="/") {
+        this.req=new reqT();
         this.path=reqT["path"];
         this.requestId=reqT.name;
         this.path=path;

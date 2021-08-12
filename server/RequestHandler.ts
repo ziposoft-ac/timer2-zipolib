@@ -85,7 +85,7 @@ export async function processSR(req: EX.Request,res:EX.Response)
         {
             success=false;
             log.log(e);
-            out.error_msg='Something broke!';
+            out.error_msg='Exception caught';
             if("stack" in e)
             {
                 out.stack=e.stack;
@@ -94,7 +94,7 @@ export async function processSR(req: EX.Request,res:EX.Response)
             {
                 out.error_msg=e.message;
             }
-            log.log(out.error_msg);
+            log.log("caught exception in ajax req:",out.error_msg);
         }
         out.success=success;
     }

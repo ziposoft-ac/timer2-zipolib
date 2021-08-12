@@ -12,8 +12,8 @@ zs-menubar
     font-family: 'Noto Sans';
     background-color: #68c;
     color:white;
-    /* position: sticky; */
-    /* top:0; */
+    position: sticky;
+    top:0;
     display: flex;
     z-index: 99999;
     border:0;
@@ -21,8 +21,14 @@ zs-menubar
     padding: 0;
     font-weight: 300;
     width:100%;
+}
+.zs_menu_top
+{
+    display: flex;
+    background-color: inherit;
 
 }
+
 zs-menubar input
 {
     font-size:var(--menu_font_size);
@@ -35,7 +41,7 @@ zs-menu,zs-menuitem
     cursor: pointer;
     display: block;
     border-right: 1px solid white;
-
+    /* z-index: 99999; */
 }
 
 zs-menu > div
@@ -52,7 +58,7 @@ zs-menu > div
 
 
 }
-zs-menubar > zs-menu
+.zs_menu_top > zs-menu
 {
     display: inline-block;
 }
@@ -68,17 +74,17 @@ zs-menu zs-menu.menushow > div
      display: block;
      left: 60px;
  }
-zs-menubar > zs-menu > a
+.zs_menu_top > zs-menu > a
 {
     display: block;
 
 }
-zs-menubar > zs-menu.menushow > div
+.zs_menu_top > zs-menu.menushow > div
  {
      display: block;
 
  }
-zs-menubar > zs-menu
+.zs_menu_top > zs-menu
 {
     /*
     border-style: solid;
@@ -92,9 +98,7 @@ zs-menubar > zs-menu
 }
 zs-menu.menuhide > div
 {
-/*
-    display: none !important;
-*/
+
 }
 
 
@@ -140,4 +144,27 @@ zs-menuitem a,zs-menulink a
     display: block;
     cursor: pointer;
     text-decoration: none;
+}
+
+@media all and  (min-width: 1000px) {
+    .zs_menu_mobile{
+        display: none;
+    }
+    .zs_menu_top {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+@media all and  (max-width: 1000px) {
+    .barhide>.zs_menu_top {
+        display: none;
+    }
+    zs-menubar
+    {
+        flex-direction: column;
+    }
+    .zs_menu_top {
+        flex-direction: column;
+    }
 }
