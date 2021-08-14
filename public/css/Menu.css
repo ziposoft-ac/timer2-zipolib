@@ -51,16 +51,12 @@ zs-menu > div::-webkit-scrollbar {
 zs-menu > div
 {
     border-style: solid;
-    border-width: 1px;
-
+    /* border-width: 1px; */
     position: relative;
     color:inherit;
     background-color: inherit;
     display:none;
     z-index: 99999;
-
-
-
 }
 .zs_menu_top > zs-menu
 {
@@ -164,6 +160,22 @@ zs-menuitem a,zs-menulink a
     {
         left: 60px;
     }
+    .zs_menu_top zs-menu.menushow > div
+    {
+        position: absolute;
+        max-height: calc(100vh - var(--header-height));
+        overflow-y: auto;
+    }
+
+    zs-menu > div::-webkit-scrollbar {
+        width: 5px;
+    }
+    zs-menu > div::-webkit-scrollbar-thumb  {
+        width: 20px;
+        left: 20px;
+        background-color: blue;
+
+    }
 }
 
 @media all and  (max-width: 1000px) {
@@ -187,9 +199,16 @@ zs-menuitem a,zs-menulink a
     zs-menu a
     {
         width: 100%;
+        padding: 0;
+
     }
     zs-menu.menushow > div
     {
         width: 100%;
+    }
+    zs-menubar *
+    {
+        border-right-width: 0 ;
+        border-left-width: 0 ;
     }
 }

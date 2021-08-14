@@ -447,8 +447,8 @@ export class ElmMenuBase extends HTMLElement
         this.menu_obj=menu_obj;
         this.ontouchend=(ev)=>{this.onTouch(ev);}
         this.onclick=(ev)=>{this.onClick(ev);}
-        this.onmouseover=(ev)=>{this.onMouseOver(ev);}
-        this.onmouseout=(ev)=>{this.onMouseOut(ev);}
+        this.onmouseenter=(ev)=>{this.onMouseOver(ev);}
+        this.onmouseleave=(ev)=>{this.onMouseOut(ev);}
     }
     onTouch(ev:TouchEvent)
     {
@@ -543,11 +543,12 @@ export class ElmMenu extends ElmMenuBase
     }
     onMouseOver(ev:MouseEvent)
     {
-
+        console.log("ElmMenu onMouseOver")
         this.classList.remove("menuhide");
         this.classList.add("menushow");
         this.a.textContent = `${this.name} ▼`; //►
         this.expanded=true;
+        this.div.scrollIntoView({behavior:"smooth",block:"nearest"})
     }
     onMouseOut(ev:MouseEvent)
     {
