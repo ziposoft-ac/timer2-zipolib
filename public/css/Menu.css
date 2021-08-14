@@ -183,7 +183,7 @@ zs-menuitem a,zs-menulink a
         display: none;
     }
     .zs_menu_mobile{
-
+        padding: 2px;
     }
     zs-menubar
     {
@@ -199,7 +199,7 @@ zs-menuitem a,zs-menulink a
     zs-menu a
     {
         width: 100%;
-        padding: 0;
+        padding: 4px 0 4px 0;
 
     }
     zs-menu.menushow > div

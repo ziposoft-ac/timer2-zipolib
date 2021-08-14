@@ -6,7 +6,19 @@ import {PageClientMenu, PageClientMenuT} from "./ClientPage.js"
 import {IInput} from "./IMenu.js";
 console.log("MenuClient module");
 
+const DEBUG=true;
+function DBG(...args: any[]) { if(DEBUG) console.log(...args);};
 
+
+let touchMode=('ontouchstart' in window);
+
+function getTouchMode() {
+    touchMode=(('ontouchstart' in window) ||  (window.innerWidth < 1000));
+    return touchMode;
+}
+
+
+console.log("touchMode is ",touchMode);
 abstract class MenuBase
 {
     label:string;
@@ -21,6 +33,8 @@ abstract class MenuBase
         this.label=props.label;
 
     }
+    dataSetKey(key:string,val:any){}
+    dataGetKey(key:string):any { return null; }
     render() : HTMLElement
     {
         return null;
@@ -38,8 +52,8 @@ abstract class MenuBase
     onClick(ev:MouseEvent) {
 
     }
-    onMouseOver(ev:MouseEvent)  { }
-    onMouseOut(ev:MouseEvent) {  }
+    onMouseEnter(ev:MouseEvent)  { }
+    onMouseLeave(ev:MouseEvent) {  }
     dataSet(val):boolean
     {
         if(this.props.setValue)
@@ -119,17 +133,18 @@ class MenuItem extends MenuBase
 export class Menu extends MenuBase
 {
     protected children : MenuBase[]=[];
-    menu_elm : ElmMenu;
-    constructor(props: IM.IMenu ) {
+    elm : ElmMenu;
+    expanded=false;
+
+    constructor(props: IM.IMenu,elm:ElmMenu=null ) {
         super(props);
-        this.menu_elm=new ElmMenu(this);
+        this.elm=elm??new ElmMenu(this);
         if(props.items) // props for
             this.clientCreateItems(this,props.items);
         if(props.dataGetKey) this.dataGetKey=props.dataGetKey;
         if(props.dataSetKey) this.dataSetKey=props.dataSetKey;
     }
-    dataSetKey(key:string,val:any){}
-    dataGetKey(key:string):any { return null; }
+
     updateDisplay()
     {
         super.updateDisplay();
@@ -146,57 +161,65 @@ export class Menu extends MenuBase
 
         }
     }
+    onClick(ev:MouseEvent)
+    {
+        DBG("ElmMenu onClick:"+this.constructor.name+" "+this.expanded);
+
+        super.onClick(ev);
+        this.expanded=!this.expanded;
+        this.expanded?this.elm.expand():this.elm.contract();
+        ev.stopPropagation();
+    }
+    onMouseEnter(ev:MouseEvent)
+    {
+        if(!getTouchMode())
+        {
+            this.elm.expand();
+            this.expanded=true;
+        }
+        DBG("Menu onMouseEnter:"+this.constructor.name)
+    }
+    onMouseLeave(ev:MouseEvent)
+    {
+        DBG("Menu onMouseLeave:"+this.constructor.name)
+        if(!touchMode)
+        {
+            this.elm.contract();
+            this.expanded=false;
+        }
+    }
     addItem(item : MenuBase)
     {
         this.children.push(item);
         item.parent=this;
         let child_elm=item.render();
-        this.menu_elm.div.appendChild(child_elm);
+        this.elm.div.appendChild(child_elm);
     }
     clearItems()
     {
-        let d=this.menu_elm.div;
+        let d=this.elm.div;
         this.children=[];
         while (d.firstChild)  d.removeChild(d.firstChild);
     }
     render() : HTMLElement
     {
-        return this.menu_elm;
+        return this.elm;
     }
     setText(txt:string)
     {
-        this.menu_elm.setText(txt);
+        this.elm.setText(txt);
     }
 }
-export class MenuBar extends MenuBase
+export class MenuBar extends Menu
 {
-    elm :ElmMenuBar =null;
-    protected children : MenuBase[]=[];
     setText(txt:string)
     {
-    }
-    updateDisplay()
-    {
-        super.updateDisplay();
-        for(let i of this.children)
-            i.updateDisplay();
-    }
-    addItem(item : MenuBase)
-    {
-        this.children.push(item);
-
-        let child_elm=item.render();
-        this.elm.divTop.appendChild(child_elm);
     }
     constructor(props:IM.IMenuBar)
     {
-        super(props);
-        this.elm=<ElmMenuBar>document.getElementById(props.id);
+        super(props,<ElmMenu>document.getElementById(props.id));
         this.elm.bind(this);
-        if(props.items) // props for
-            this.clientCreateItems(this,props.items);
     }
-
 
 }
 export class MenuSelectItem extends MenuItem
@@ -250,8 +273,8 @@ export class MenuSelect extends Menu
             this.baseName+" : "+selectLabel);
 
         this.label=label;
-        this.menu_elm.name=label;
-        this.menu_elm.a.text=label;
+        this.elm.name=label;
+        this.elm.a.text=label;
     }
     callbackSelect(item:MenuSelectItem)
     {
@@ -262,7 +285,7 @@ export class MenuSelect extends Menu
         super(props);
 
 
-        this.menu_elm=new ElmMenu(this);
+        this.elm=new ElmMenu(this);
         this.options=props.options;
         this.baseName=this.label;
         for(let key in this.options)
@@ -371,6 +394,7 @@ export class MenuBool extends MenuItem
         let state=!this.dataGet();
         this.dataSet(state);
         this.updateDisplay();
+        ev.stopPropagation();
 
     }
 
@@ -445,31 +469,11 @@ export class ElmMenuBase extends HTMLElement
     bind(menu_obj:MenuBase)
     {
         this.menu_obj=menu_obj;
-        this.ontouchend=(ev)=>{this.onTouch(ev);}
-        this.onclick=(ev)=>{this.onClick(ev);}
-        this.onmouseenter=(ev)=>{this.onMouseOver(ev);}
-        this.onmouseleave=(ev)=>{this.onMouseOut(ev);}
+        this.onclick=(ev)=>{this.menu_obj.onClick(ev);}
+        this.onmouseenter=(ev)=>{this.menu_obj.onMouseEnter(ev);}
+        this.onmouseleave=(ev)=>{this.menu_obj.onMouseLeave(ev);}
     }
-    onTouch(ev:TouchEvent)
-    {
-        console.log("onTouch");
-       // ev.stopPropagation();
 
-    }
-    onClick(ev:MouseEvent)
-    {
-        //this.onMouseOut(ev);
-        this.menu_obj.onClick(ev);
-    }
-    onMouseOver(ev:MouseEvent)
-    {
-        this.menu_obj.onMouseOver(ev);
-    }
-    onMouseOut(ev:MouseEvent)
-    {
-        this.menu_obj.onMouseOut(ev);
-
-    }
 }
 export class ElmMenuItem extends ElmMenuBase
 {
@@ -505,7 +509,6 @@ export class ElmMenuItem extends ElmMenuBase
 
 export class ElmMenu extends ElmMenuBase
 {
-    expanded=false;
     div : HTMLDivElement;
     a : HTMLAnchorElement;
     name :string;
@@ -522,53 +525,29 @@ export class ElmMenu extends ElmMenuBase
         this.classList.add("menusub");
         this.appendChild(this.a);
         this.appendChild(this.div);
-        this.onMouseOut(null);
+        this.contract();
 
     }
     setText(txt:string)
     {
         this.name=txt;
     }
-    onTouch(ev:TouchEvent)
+    expand()
     {
-        /*
-        ev.stopPropagation();
-
-        ev.preventDefault();
-        if(this.expanded)
-            this.onMouseOut(null);
-        else
-            this.onMouseOver(null);
-*/
-    }
-    onMouseOver(ev:MouseEvent)
-    {
-        console.log("ElmMenu onMouseOver")
+        DBG("ElmMenu expand:"+this.constructor.name)
         this.classList.remove("menuhide");
         this.classList.add("menushow");
         this.a.textContent = `${this.name} ▼`; //►
-        this.expanded=true;
         this.div.scrollIntoView({behavior:"smooth",block:"nearest"})
     }
-    onMouseOut(ev:MouseEvent)
+    contract()
     {
+        DBG("ElmMenu contract:"+this.constructor.name)
         this.classList.replace("menushow","menuhide");
         this.a.textContent = `${this.name} ►`; //►
-        this.expanded=false;
-
     }
-    onClick(ev:MouseEvent)
-    {
-        console.log("menu onClick:",ev['expanded']);
 
-        super.onClick(ev);
-        if(this.expanded)
-        {
-            console.log("menu onClick expanded");
 
-            //this.onMouseOut(ev);
-        }
-    }
     create(props)
     {
 
@@ -578,30 +557,29 @@ export class ElmMenuBar extends ElmMenuBase
 {
 
     divMobile : HTMLDivElement;
-    divTop : HTMLDivElement;
+    div : HTMLDivElement;
     constructor(menu: Menu) {
         super(menu);
 
         this.divMobile = document.createElement("div");
         this.divMobile.textContent = `☰MENU`; //►
 
-        this.divTop = document.createElement("div");
+        this.div = document.createElement("div");
         this.divMobile.classList.add("zs_menu_mobile");
         this.classList.add("barhide");
-        this.divTop.classList.add("zs_menu_top");
+        this.div.classList.add("zs_menu_top");
         this.appendChild(this.divMobile);
-        this.appendChild(this.divTop);
+        this.appendChild(this.div);
 
     }
-    onMouseOver(ev:MouseEvent)
+    expand(ev:MouseEvent)
     {
         this.classList.remove("barhide");
         this.classList.add("barshow");
     }
-    onMouseOut(ev:MouseEvent)
+    contract(ev:MouseEvent)
     {
         this.classList.replace("barshow","barhide");
-
     }
 
 };

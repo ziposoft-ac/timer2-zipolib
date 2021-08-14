@@ -29,8 +29,8 @@ export class Box
         this.elm = document.createElement("div");
         this.text=text;
 
-        this.elm.onmouseover=(ev)=>{return this.onMouseOver(ev);}
-        this.elm.onmouseout=(ev)=>{this.onMouseOut(ev);}
+        this.elm.onmouseover=(ev)=>{return this.onMouseEnter(ev);}
+        this.elm.onmouseout=(ev)=>{this.onMouseLeave(ev);}
         this.elm.onclick=(ev)=>{return this.onClick(ev);}
         this.elm.className="zs_box";
         this.elm.classList.add('lvl'+this.level);
@@ -119,10 +119,10 @@ export class Box
         //this.toggle();
         return false;
     }
-    onMouseOver(ev:MouseEvent)
+    onMouseEnter(ev:MouseEvent)
     {
     }
-    onMouseOut(ev:MouseEvent)
+    onMouseLeave(ev:MouseEvent)
     {
 
     }
