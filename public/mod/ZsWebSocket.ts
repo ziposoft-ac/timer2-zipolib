@@ -164,7 +164,7 @@ export class ZsWebSocket {
 
                     setTimeout( ()=> {
                         this.connectionCheck();
-                    }, 250);
+                    }, 1000);
                 } else {
                     this.set_state(State.closed);
                 }

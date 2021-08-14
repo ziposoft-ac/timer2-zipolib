@@ -12,6 +12,7 @@ abstract class MenuBase
     label:string;
     id:string;
     parent:Menu;
+    value:any=null;
     constructor(
         public props: IM.IBase) {
         if(!props.key)
@@ -39,17 +40,28 @@ abstract class MenuBase
     }
     onMouseOver(ev:MouseEvent)  { }
     onMouseOut(ev:MouseEvent) {  }
-    dataSet(val)
+    dataSet(val):boolean
     {
         if(this.props.setValue)
+        {
             this.props.setValue(val);
-        else
+            return true;
+        }
+        if(this.props.key)
+        {
             this.parent.dataSetKey(this.props.key,val);
+            return true;
+
+        }
+        this.value=val;
+        return false;
     }
     dataGet() : any{
         if(this.props.getValue)
             return this.props.getValue();
-        return  this.parent.dataGetKey(this.props.key);
+        if(this.props.key)
+            return  this.parent.dataGetKey(this.props.key);
+        return this.value;
     }
     clientCreateItems( parent : MenuBase,item_list:  IM.IBase[],level:number=0)
     {
@@ -384,6 +396,7 @@ export class MenuBoolCookie extends MenuBool
         {
             Cookies.remove(this.props.key);
         }
+        return true;
     }
     dataGet() : any{
         return Cookies.get(this.props.key)!=undefined ;
@@ -530,7 +543,6 @@ export class ElmMenu extends ElmMenuBase
     }
     onMouseOver(ev:MouseEvent)
     {
-        console.log("menu onMouseOver");
 
         this.classList.remove("menuhide");
         this.classList.add("menushow");
@@ -539,7 +551,6 @@ export class ElmMenu extends ElmMenuBase
     }
     onMouseOut(ev:MouseEvent)
     {
-        console.log("menu mouseout");
         this.classList.replace("menushow","menuhide");
         this.a.textContent = `${this.name} ►`; //►
         this.expanded=false;

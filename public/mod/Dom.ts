@@ -23,9 +23,18 @@ export function type<T extends HTMLElement>(elementID:string) : T
 {
     return <T>document.getElementById(elementID);
 }
+export function tag(tagName:string) : HTMLElement
+{
+    let e=document.getElementsByTagName(tagName);
+    return <HTMLElement>e[0];
+}
 export function id(elementID:string) : HTMLElement
 {
     return document.getElementById(elementID);
+}
+export function button(id:string) : HTMLButtonElement
+{
+    return type<HTMLButtonElement>(id);
 }
 export function zode<T>(elementID:string) : ZNode<T>
 {

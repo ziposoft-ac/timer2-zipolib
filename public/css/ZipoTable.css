@@ -3,18 +3,22 @@
 {
     position: relative;
     border-collapse: collapse;
-    margin-top:62px;
-    overflow: auto;
-    height: 100%;
+    width: fit-content;
 }
 .ZipoTable th
 {
     position: sticky;
-    top:0;
-    background-color: white;
+    top:100px;
+    background-color: black;
+    border: black solid 1px;
+    color: white;
+
 }
-.ZipoTable tbody
+.ZipoTable td
 {
+    width: max-content;
+
+    white-space:nowrap;
 
 
 }

@@ -52,17 +52,24 @@ export class ZDataTable
         let h=`<div>${json}</div>`;
         return h;
     }
-    add(data:object)
+    add(data:object,max=0)
     {
         this.dt.row.add(data);
         this.numRows++;
-        let num_rows=this.dt.rows( ).count()
 
-        if(this.numRows>10)
+
+        if(max)
         {
-            this.dt.row(0).remove();
-            this.numRows--;
+            let num_rows=this.dt.rows( ).count()
+
+            if(this.numRows>max)
+            {
+                this.dt.row(0).remove();
+                this.numRows--;
+            }
+
         }
+
         this.dt.draw(false);
     }
     refreshData(data: object[])

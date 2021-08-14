@@ -3,6 +3,7 @@ import {MenuBar, MenuLink} from "./MenuClient.js";
 import {PageData, PageDataMenu} from "./PageData.js"
 import * as $ from "./Dom.js";
 import Cookies from "./Cookies.js";
+import {tag} from "./Dom.js";
 
 export class LocalStorage
 {
@@ -62,7 +63,8 @@ export class PageClientT<STATIC_DATA extends PageData> {
 
             this.run();
         }
-        this.elm_main = $.id('main');
+        this.elm_header = $.tag('header');
+        this.elm_main = $.tag('main');
         //console.log("client page constructor");
 
     }

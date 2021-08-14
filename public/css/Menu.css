@@ -3,7 +3,7 @@ e
 */
 :root {
     --menu_font_size: 30px;
-
+    --backgound_color:  #68c;
 
 }
 zs-menubar
@@ -36,20 +36,24 @@ zs-menubar input
 }
 zs-menu,zs-menuitem
 {
-    background-color: inherit;
+    background-color: var(--backgound_color);;
+
     color: inherit;
     cursor: pointer;
     display: block;
     border-right: 1px solid white;
     /* z-index: 99999; */
 }
-
+/*
+zs-menu > div::-webkit-scrollbar {
+    display: none;
+}*/
 zs-menu > div
 {
     border-style: solid;
     border-width: 1px;
-    position: absolute;
 
+    position: relative;
     color:inherit;
     background-color: inherit;
     display:none;
@@ -67,12 +71,13 @@ zs-menu > div
 zs-menu > a
 {
     display: inline-block;
+
     /* line-height: 1.1em; */
 }
-zs-menu zs-menu.menushow > div
+zs-menu.menushow > div
  {
      display: block;
-     left: 60px;
+
  }
 .zs_menu_top > zs-menu > a
 {
@@ -109,7 +114,8 @@ zs-menu.menushow > a
 }
 zs-menu a
 {
-    background-color: inherit;
+    background-color: var(--backgound_color);;
+
     white-space: nowrap;
 
     padding: 10px;
@@ -154,11 +160,18 @@ zs-menuitem a,zs-menulink a
         display: flex;
         flex-direction: row;
     }
+    zs-menu zs-menu.menushow > div
+    {
+        left: 60px;
+    }
 }
 
 @media all and  (max-width: 1000px) {
     .barhide>.zs_menu_top {
         display: none;
+    }
+    .zs_menu_mobile{
+
     }
     zs-menubar
     {
@@ -166,5 +179,17 @@ zs-menuitem a,zs-menulink a
     }
     .zs_menu_top {
         flex-direction: column;
+        max-height: calc(100vh - 100px);
+        overflow-y: scroll;
+    }
+    .zs_menu_top zs-menu{
+    }
+    zs-menu a
+    {
+        width: 100%;
+    }
+    zs-menu.menushow > div
+    {
+        width: 100%;
     }
 }

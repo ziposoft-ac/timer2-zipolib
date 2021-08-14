@@ -153,3 +153,8 @@ export function miles_to_km(miles)
 {
     return (miles/0.621371);
 }
+export function celciusToF(c:number)
+{
+    return Math.round(c*90/5+320)/10;
+
+}
