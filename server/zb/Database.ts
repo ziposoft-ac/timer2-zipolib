@@ -470,6 +470,7 @@ export class Table<T extends DataObj> extends TableBase
             let vals="";
             for(const f of this.fields)
             {
+                if(!f.getDbType()) continue;
                 if(cols)
                 {
                     cols+=',';
@@ -490,6 +491,7 @@ export class Table<T extends DataObj> extends TableBase
             let vals="";
             for(const f of this.fields)
             {
+                if(!f.getDbType()) continue;
                 if(cols)
                 {
                     cols+=',';
@@ -519,6 +521,7 @@ export class Table<T extends DataObj> extends TableBase
             let st="";
             for(const f of this.fields)
             {
+                if(!f.getDbType()) continue;
                 if(st) st+=',';
                 st+=`${f.id} = @${f.id}`;
             }

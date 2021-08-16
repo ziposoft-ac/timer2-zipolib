@@ -134,7 +134,7 @@ export class ZDataTable
         });
         this.dt.draw();
     }
-    render_time(data, type, row) {
+    render_time_ms(data, type, row) {
 
         if (type == "sort") {
             if (data)
@@ -145,7 +145,7 @@ export class ZDataTable
 
         if (!data)
             return "";
-        return Time.formatTimestamp_ms(data * 1000, false, false);
+        return Time.formatTimestamp_ms(data , false, false);
     }
 
 }

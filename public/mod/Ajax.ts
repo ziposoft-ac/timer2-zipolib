@@ -67,8 +67,7 @@ export function  Req<PARAMS,DATA>(paramT :   (new () => PARAMS),dataT :   (new (
             this.out=new  AjaxResponseT<DATA>(dataT);
         }
     };
-    //cl["pT"]=()=>makeParam(paramT);
-    //cl["dT"]=()=>makeResponse(dataT);
+
       return cl;
 }
 export type ReqT<P,D>= (new () => AjaxRequest<P,D>);

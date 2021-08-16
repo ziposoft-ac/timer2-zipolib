@@ -7,33 +7,7 @@
  */
 
 
-import fs from "fs";
 
-export async function jsonWrite(filename:string,obj:object,pretty=false) : Promise<boolean>
-{
-    try {
-        await fs.promises.writeFile(filename, JSON.stringify(obj,null,(pretty?2:0)));
-    }
-    catch (e) {
-        console.log("jsonWrite FAILED:",filename,e);
-        return false;
-    }
-    return true;
-}
-export async function jsonRead<T>(filename:string) : Promise<T>
-{
-    let obj:T=null;
-    try {
-        let buff=await fs.promises.readFile(filename);
-        if(buff)
-            obj=JSON.parse(buff.toString());
-    }
-    catch (e) {
-        console.log("jsonRead FAILED:",filename,e);
-        return null;
-    }
-    return obj;
-}
 
 export function objClone(src:Object) : Object
 {
