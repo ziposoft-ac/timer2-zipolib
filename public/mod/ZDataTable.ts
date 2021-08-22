@@ -16,7 +16,7 @@ export class ZDataTable
         lengthMenu: [[25, 50, 75, -1], [25, 50, 75, "All"]],
         columns: [            ],
         data : null,
-        order: [[0,"desc"]],
+        //order: [[0,"desc"]],
 
     };
     options_zt ={

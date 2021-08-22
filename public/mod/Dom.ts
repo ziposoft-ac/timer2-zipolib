@@ -8,6 +8,10 @@ export class ZNode<T>
     }
 
 }
+export function intval(elementID:string) : number
+{
+    return parseInt(input(elementID).value);
+}
 export function value(elementID:string) : string
 {
     return input(elementID).value;

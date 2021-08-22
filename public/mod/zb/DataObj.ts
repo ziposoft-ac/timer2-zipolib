@@ -24,7 +24,7 @@ export var fldFactory=new Map<string,FldCon>();
 
 
 export function FF (constructor) {
-    console.log("FEILD TYPE:",constructor.name);
+    //console.log("FEILD TYPE:",constructor.name);
     fldFactory.set(constructor.name,constructor);
 }
 
