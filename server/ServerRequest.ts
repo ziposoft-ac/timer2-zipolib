@@ -81,7 +81,6 @@ export class ServerRequestT<P,D> extends ServerRequest
 var SR_Registry : Record<string, typeof ServerRequest>={};
 
 
-
 export function  makeSR<P,D>(ajaxReqT:ReqT<P,D>  )
 {
     let cl= class extends ServerRequestT<P,D>{

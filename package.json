@@ -14,22 +14,22 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/ws": "^7.4.0",
-
+    "@types/better-sqlite3": "^5.4.1",
+    "@types/cheerio": "^0.22.23",
     "@types/datatables.net": "^1.10.19",
+    "@types/node-fetch": "^2.5.8",
+    "@types/ws": "^7.4.0",
+    "better-sqlite3": "^7.1.2",
+    "cheerio": "^1.0.0-rc.5",
+    "csv-parse": "^4.16.0",
     "datatables": "^1.10.18",
     "express": "^4.17.1",
+    "got": "^11.8.1",
     "pretty": "^2.0.0",
+    "reflect-metadata": "^0.1.13",
+    "source-map-support": "^0.5.19",
     "tough-cookie": "^4.0.0",
     "tough-cookie-file-store": "^2.0.2",
-    "got": "^11.8.1",
-    "@types/better-sqlite3": "^5.4.1",
-    "better-sqlite3": "^7.1.2",
-    "@types/node-fetch": "^2.5.8",
-    "cheerio": "^1.0.0-rc.5",
-    "@types/cheerio": "^0.22.23",
-    "ws": "^7.5.3",
-    "source-map-support": "^0.5.19",
-    "csv-parse": "^4.16.0"
+    "ws": "^7.5.3"
   }
 }

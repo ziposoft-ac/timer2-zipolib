@@ -3,7 +3,6 @@
 import * as IM from "./IMenu.js";
 import Cookies from "./js.cookie.js";
 import {PageClientMenu, PageClientMenuT} from "./ClientPage.js"
-import {IInput} from "./IMenu.js";
 console.log("MenuClient module");
 
 const DEBUG=false;
@@ -25,12 +24,15 @@ abstract class MenuBase
     id:string;
     parent:Menu;
     value:any=null;
+    access=IM.AccessLevel.Anon;
     constructor(
         public props: IM.IBase) {
         if(!props.key)
             props.key="";
         this.id=props.id;
         this.label=props.label;
+        if(props.access)
+            this.access=props.access;
 
     }
     dataSetKey(key:string,val:any){}
@@ -46,14 +48,12 @@ abstract class MenuBase
         if(this.props.getLabel)
         {
             this.props.getLabel();
-
         }
     }
-    onClick(ev:MouseEvent) {
-
-    }
+    onClick(ev:MouseEvent) {     }
     onMouseEnter(ev:MouseEvent)  { }
     onMouseLeave(ev:MouseEvent) {  }
+    contract() {}
     dataSet(val):boolean
     {
         if(this.props.setValue)
@@ -161,13 +161,41 @@ export class Menu extends MenuBase
 
         }
     }
+    contractOthers()
+    {
+        let up=(m:Menu) =>{
+            if(m.parent)
+            {
+                for(let i of m.parent.children)
+                    if(i!=m) i.contract();
+                up(m.parent);
+            }
+        }
+        up(this);
+    }
+    contract() {
+        if(this.expanded)
+        {
+            this.expanded=false; this.elm.contract();
+        }
+        for(let i of this.children) i.contract();
+
+    }
     onClick(ev:MouseEvent)
     {
         DBG("ElmMenu onClick:"+this.constructor.name+" "+this.expanded);
 
         super.onClick(ev);
-        this.expanded=!this.expanded;
-        this.expanded?this.elm.expand():this.elm.contract();
+        if(this.expanded)
+        {
+            this.contract();
+        }
+        else
+        {
+            this.contractOthers();
+            this.expanded=true;
+            this.elm.expand();
+        }
         ev.stopPropagation();
     }
     onMouseEnter(ev:MouseEvent)

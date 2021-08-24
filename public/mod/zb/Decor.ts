@@ -1,6 +1,8 @@
 import * as F from "./Fields.js";
 import {DataObj, getMeta,IField,Field} from "./DataObj.js";
 import {FieldDummy} from "./Fields.js";
+//import "reflect-metadata";
+
 export function getDataObjFldList(classobj: Object) :Object
 {
     const fieldListId="__flds_"+classobj.constructor.name;
@@ -21,6 +23,10 @@ function Fld<FIELD_T extends Field> (classobj: Object,id:string,type: (new (prop
 }
 
 type DecFunc= (classType,memberName)=>void;
+
+
+
+
 
 export function Dummy(c ,p) { Fld(c,p,F.FieldDummy) }
 export function Text(c ,p) { Fld(c,p,F.FieldText) }

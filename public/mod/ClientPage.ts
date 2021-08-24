@@ -1,3 +1,4 @@
+import * as IM from "./IMenu.js";
 
 import {MenuBar, MenuLink} from "./MenuClient.js";
 import {PageData, PageDataMenu} from "./PageData.js"
@@ -27,8 +28,9 @@ export class LocalStorage
 }
 class StorageData
 {
+    accessLevel=IM.AccessLevel.Anon;
+    accessKey="public"
 }
-type StorageDataC=(new () => StorageData);
 
 export class PageClientT<STATIC_DATA extends PageData> {
 
@@ -38,6 +40,7 @@ export class PageClientT<STATIC_DATA extends PageData> {
     cookies = Cookies;
     storage =new StorageData();
     storageName = "Page";
+    get accessLevel() { return this.storage.accessLevel; }
 
     storageLoad(objDest: Object = null) {
         if (!objDest)

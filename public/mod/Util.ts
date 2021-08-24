@@ -36,19 +36,63 @@ export class Factory
             if(++depth > 10)
                 throw Error("Object assign recursion exceeds 10.");
             if(!src) return;
-            let  dest=Object.assign({},src);
-            for (const [key, value] of Object.entries(dest)) {
-                if(typeof value === "object")
-                    dest[key]=clone(value,depth);
-            }
+            let  dest= {};
+            for (const [key, value] of Object.entries(src)) {
+                let copyVal=(val)=>{
+                    if(val instanceof Array)
+                    {
+                        let v=[];
+                        for(let i=0;i<val.length;i++)
+                            v.push(copyVal(val[i]));
+                        return v;
+                    }
+                    if(typeof val === "object")
+                    {
+                        return clone(val,depth);
+                    }
+                    return val;
+                }
 
-            dest["__type__"]=src.constructor.name;
+                dest[key]=copyVal(value);
+            }
+            if(src.constructor.name in this.classes)
+            {
+                dest["__type__"]=src.constructor.name;
+            }
             return dest;
         }
         let copy=clone(obj,0);
         return JSON.stringify(copy,null,(pretty?2:0));
     }
+    reBuild(plain:object)
+    {
 
+        let createObj=(objIn:Object) : Object=>{
+            if(!objIn) return objIn;
+            let type=objIn["__type__"];
+            let objOut=null;
+            if(type)
+            {
+                delete(objIn["__type__"]);
+                objOut=this.newObj(type);
+            }
+            else objOut={};
+            for (const [k, value] of Object.entries(objIn)) {
+
+
+
+                let v=value;
+                if(typeof value === "object")
+                {
+                    v=createObj(value);
+                }
+                objOut[k]=v;
+            }
+            return objOut;
+
+        }
+        return createObj(plain);
+    }
     load(json:string) : object
     {
         let temp=JSON.parse(json);
@@ -64,17 +108,49 @@ export class Factory
             }
             else objOut={};
             for (const [k, value] of Object.entries(objIn)) {
-                let v=value;
-                if(typeof value === "object")
-                {
-                    v=createObj(value);
+
+                let copyVal=(val)=>{
+                    if(val==null) return null;
+                    if(val instanceof Array)
+                    {
+                        let v=[];
+                        for(let i=0;i<val.length;i++)
+                            v.push(copyVal(val[i]));
+                        return v;
+                    }
+                    if(typeof val === "object")
+                    {
+                        return createObj(val);
+                    }
+                    return val;
                 }
-                objOut[k]=v;
+                objOut[k]=copyVal(value);
             }
             return objOut;
 
         }
         return createObj(temp);
+    }
+    setTypes(obj:object) : void
+    {
+        let assignType=(obj:Object,depth) : void=>
+        {
+            if(!obj) return;
+
+            if(++depth > 10)
+                throw Error("Object assign recursion exceeds 10.");
+            for (const [, value] of Object.entries(obj))
+            {
+                if(typeof value === "object")
+                    assignType(value,depth);
+
+            }
+            if(obj.constructor.name in this.classes)
+            {
+                obj["__type__"]=obj.constructor.name;
+            }
+        }
+        assignType(obj,0);
     }
     saveInPlace(obj:object,pretty=false) : string
     {
@@ -89,10 +165,19 @@ export class Factory
                 if(typeof value === "object")
                     assignType(value,depth);
             }
-            obj["__type__"]=obj.constructor.name;
+            if(obj.constructor.name in this.classes)
+            {
+                obj["__type__"]=obj.constructor.name;
+            }
         }
         assignType(obj,0);
         return JSON.stringify(obj,null,(pretty?2:0));
+    }
+    addClass(c)
+    {
+        this.classes[c.name]=c;
+        console.log("Factory:",c.name);
+
     }
     constructor(
         classes : any[]=[]
@@ -100,7 +185,7 @@ export class Factory
     {
         for(let c of classes)
         {
-            this.classes[c.name]=c;
+            this.addClass(c);
         }
     }
     newObj(type:string) : Object
@@ -109,6 +194,7 @@ export class Factory
         return (c?new c(): new Object());
     }
 }
+export var gObjFactory=new Factory();
 
 export function stringToBase64(str: string): string {
     const buff = Buffer.from(str, 'utf8');

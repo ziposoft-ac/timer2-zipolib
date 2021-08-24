@@ -1,3 +1,4 @@
+import * as Util from "/zs_client/Util.js";
 
 import { AjaxParamsT, AjaxRequest,  AjaxResponseT, ReqT} from "/zs_client/Ajax.js";
 /*
@@ -105,9 +106,23 @@ export class ClientRequestT<PARAMS,DATA>
         }
         if(res.ok)
         {
-            let recv= await res.json();
+            const factbuild=true;
+            if(factbuild)
+            {
+                let recv= await res.text();
+
+                // @ts-ignore
+                this.req.out=Util.gObjFactory.load(recv);
+            }
+            else
+            {
+
+                let recv= await res.json();
+                Object.assign(this.out,recv);
+
+            }
             let defData=this.out.data;
-            Object.assign(this.out,recv);
+
             this.dumpLog();
             if(this.out.success)
             {

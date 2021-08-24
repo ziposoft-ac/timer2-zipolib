@@ -39,6 +39,12 @@ export function getDateTimeFileNameCurrent() {
 
     return getDateTimeFileName(new Date());
 }
+export function getTodayAgeFromBdayStr(bday:string) {
+    let d=new Date(bday);
+    let diff=Date.now()-d.valueOf();
+    let ageDate=new Date(diff);
+    return Math.abs(ageDate.getUTCFullYear() - 1970);
+}
 export function getAgeFromBirthDate(fromday:Date,bday:Date) {
     let diff=fromday.valueOf()-bday.valueOf();
     let ageDate=new Date(diff);

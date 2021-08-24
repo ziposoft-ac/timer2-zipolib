@@ -99,7 +99,6 @@ export class ZDataTable
         this.onClickRow(data);
         if(this.options_zt.enableRowChild)
         {
-            let key=data[this.options_zt.dataUniqueId];
             if (!data) {
                 // click on the expanded element
                 if(!this.options_zt.rowChildClickClose)
@@ -108,6 +107,8 @@ export class ZDataTable
                 row = this.dt.row(parent[0]);
                 data = row.data();
             }
+            let key=data[this.options_zt.dataUniqueId];
+
             let context = this.rowContext.get(key);
             if (!context) {
                 context =new RowContext();

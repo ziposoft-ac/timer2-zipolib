@@ -58,8 +58,13 @@ export class AjaxRequest<PARAMS,DATA>
     in:AjaxParamsT<PARAMS>;
     out:AjaxResponseT<DATA>;
 }
+
+
+import * as Util from "/zs_client/Util.js";
+
 export function  Req<PARAMS,DATA>(paramT :   (new () => PARAMS),dataT :   (new () => DATA)  )
 {
+    //Util.gObjFactory.addClass(dataT);
     let cl= class extends AjaxRequest<PARAMS,DATA>{
         constructor() {
             super();

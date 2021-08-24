@@ -1,4 +1,11 @@
-import {MenuSelect, MenuSelectItem} from "/zs_client/MenuClient";
+
+export enum AccessLevel {
+    Anon,
+    User,
+    Admin,
+    Root,
+    Debug
+}
 
 
 export enum Type {
@@ -20,6 +27,7 @@ export interface IBase
     key?: string;
     getValue? : ()=> any;
     setValue? : (any)=> void;
+    access?: AccessLevel;
 
 }
 

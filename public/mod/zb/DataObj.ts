@@ -3,6 +3,8 @@
 
 
 
+import * as Util from "/zs_client/Util.js";
+
 export interface  IField {
     type ? : string;
     showList ?: boolean;
@@ -103,6 +105,9 @@ export class DataObjMeta
         this.con=con;
         this.name=con.name;
         dataObjReg.set(this.name,this);
+        Util.gObjFactory.addClass(con);
+
+        //dataFactory.addClass(con);
         //console.log("do: ",this.name);
     }
     protected fsUnique : FieldSet = new  FieldSet();
