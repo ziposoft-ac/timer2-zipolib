@@ -14,6 +14,7 @@ export class PageMenu extends PageServer
         super(props);
         this.modules = ["/zs_client/MenuClient"];
         this.staticData.menubar=this.menubar;
+        props.req.cookies['']
         this.page_module="/zs_client/ClientPage";
 
         this.css.push("/zs_public/css/Menu.css");

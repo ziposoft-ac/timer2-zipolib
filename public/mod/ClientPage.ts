@@ -54,6 +54,7 @@ export class PageClientT<STATIC_DATA extends PageData> {
             objSource = this.storage;
         let str = JSON.stringify(objSource);
         localStorage.setItem(this.storageName, str);
+        console.log("stor save");
     }
     constructor(staticData) {
 

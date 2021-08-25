@@ -50,11 +50,12 @@ enum ReqLevel
     public,
     user,
     admin,
-
+    root,
+    debug
 }
 export class AjaxRequest<PARAMS,DATA>
 {
-
+    reqLevel: ReqLevel=ReqLevel.admin;
     in:AjaxParamsT<PARAMS>;
     out:AjaxResponseT<DATA>;
 }

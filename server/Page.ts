@@ -26,6 +26,7 @@ export class PageServer
 {
     log: Logger=new Logger();
     debug=false;
+    access=9;
     googleTagId : string=null;
     staticData : PageData=new PageData();
     fetchVersion=gFetchversion;

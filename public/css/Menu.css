@@ -57,6 +57,7 @@ zs-menu > div
     background-color: inherit;
     display:none;
     z-index: 99999;
+    height: max-content;
 }
 .zs_menu_top > zs-menu
 {
@@ -164,7 +165,8 @@ zs-menuitem a,zs-menulink a
     {
         position: absolute;
         max-height: calc(100vh - var(--header-height));
-        overflow-y: auto;
+        /* overflow-y: scroll; */
+        height: auto;
     }
 
     zs-menu > div::-webkit-scrollbar {

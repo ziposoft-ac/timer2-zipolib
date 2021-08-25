@@ -181,7 +181,7 @@ export class  DataObj
 
         return this;
     }
-    directCopy(obj : Object=null) {
+    merge(obj : Object=null) {
         if(obj)
         {
             for(let key in obj)
