@@ -6,7 +6,9 @@
  * Written by Anthony Corriveau <ac@ZipoSoft.com>  2018
  */
 
-
+export async function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 export function objClone(src:Object) : Object

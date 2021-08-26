@@ -124,6 +124,7 @@ export class ClientRequestT<PARAMS,DATA>
             let defData=this.out.data;
 
             this.dumpLog();
+            console.log("REQ",this.requestId+":"+this.in.action,"took:"+this.out.time_total_request);
             if(this.out.success)
             {
                 this.onData(this.out.data);

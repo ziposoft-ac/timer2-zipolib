@@ -32,18 +32,15 @@ export class ServerRequest
     }
     async preExec() : Promise<boolean>
     {
-        console.log("DEFAULT preExec");
         return true;
     }
     async exec(): Promise<boolean>
     {
-        console.log("DEFAULT EXEC");
         return true;
 
     }
     async postExec(): Promise<boolean>
     {
-        console.log("DEFAULT postExec");
         return true;
 
     }
@@ -53,7 +50,6 @@ export class ServerRequest
     }
     postSend()
     {
-        console.log("DEFAULT postSend");
     }
 }
 

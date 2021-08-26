@@ -40,10 +40,12 @@ export async function processSR(req: EX.Request, res: EX.Response) {
     let reqId = req.body["requestId"];
     let sr: ServerRequest;
     let srFact = getSR(reqId);
+    let tsStart=process.hrtime();
     if (srFact) {
+
         sr = new srFact();
         let log = sr.logger;
-        log.log("got SR:", srFact.name);
+        //log.log("got SR:", reqId);
 
         //Get the SR
         let input = sr.in;
@@ -91,6 +93,8 @@ export async function processSR(req: EX.Request, res: EX.Response) {
         sr = new ServerRequestError("Unknown Request:" + reqId);
 
     sr.preSend();
+    let tsDone=process.hrtime(tsStart);
+    sr.out.time_total_request=tsDone[0]*1000+tsDone[1]/1000000;
     const factsend = true;
     if (factsend) {
         /*
