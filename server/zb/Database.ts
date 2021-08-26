@@ -323,7 +323,7 @@ export class Table<T extends DataObj> extends TableBase
     addNew(objIn : Partial<T>) : T
     {
         let o=this.newObj();
-        o=Object.assign(o,objIn);
+        o.merge(objIn);
         try {
             let r=this.insert(o);
             if(r.changes)
@@ -514,7 +514,7 @@ export class Table<T extends DataObj> extends TableBase
     };
     updateBy(obj : T,key_id: string,commit:boolean)
     {
-
+        //TODO - this is bad. The obj:T must be a class instance, cant be a partial
         let trans=this.getTrans('update_by'+key_id);
         return trans.exec(commit,obj,this.zb,()=>{
             let st="";

@@ -8,12 +8,7 @@
 
 import fs from 'fs';
 import CsvParse from "csv-parse";
-export async function mergeObj(src:Object,dest:Object) {
-    if(src)
-        for(let key in src)
-            if(key in dest)
-                dest[key]=src[key];
-}
+
 export async function jsonWrite(filename:string,obj:object,pretty=false) : Promise<boolean>
 {
     try {

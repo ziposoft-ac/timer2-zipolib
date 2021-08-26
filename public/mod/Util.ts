@@ -10,6 +10,39 @@ export async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export async function mergeObj(src:Object,dest:Object) {
+    if(src)
+        for(let key in src)
+            if(key in dest)
+                dest[key]=src[key];
+}
+
+export class Serialze
+{
+    waiting = [];
+    taken = false;
+
+    async acquire() {
+        return new Promise(resolve =>
+        {
+            if (!this.taken) {
+                this.taken = true;
+                resolve(null);
+                return;
+            }
+            this.waiting.push(resolve);
+        });
+    }
+    release() {
+        if (!this.taken) return;
+        if (this.waiting.length > 0) {
+            const resolve = this.waiting.shift();
+            resolve();
+        } else {
+            this.taken = false;
+        }
+    }
+};
 
 export function objClone(src:Object) : Object
 {
