@@ -39,7 +39,7 @@ export class ServerRequest
         return true;
 
     }
-    async postExec(): Promise<boolean>
+    async postExec(success:boolean): Promise<boolean>
     {
         return true;
 

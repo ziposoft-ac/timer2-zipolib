@@ -13,6 +13,8 @@ import path from 'path';
 import fs from "fs";
 //import npmPackage from './package.json';
 
+
+
 let npmPackage={};
 let buff=await fs.promises.readFile(proj_root+"/package.json").catch((e)=>{
     console.log("Cannot get package.json:",e);
@@ -60,13 +62,16 @@ export const resolve = (specifier, parentModuleURL, defaultResolve) => {
     let newSpecifier = alias === undefined
         ? specifier
         : path.join(aliases[alias], specifier.substr(alias.length));
-/*
+
+    /*
+        console.log("aliases:",aliases);
+
     console.log("specifier:",specifier);
     console.log("parentModuleURL:",parentModuleURL);
     console.log("newSpecifier:",newSpecifier);
     console.log("defaultResolve:",defaultResolve);
-*/
 
+*/
     if(!(newSpecifier.endsWith(".js")||newSpecifier.endsWith(".json")))
     {
         if(newSpecifier.startsWith("/")

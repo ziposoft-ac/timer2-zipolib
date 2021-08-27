@@ -13,6 +13,7 @@ export class ZDataTable
     options_dt : DataTables.Settings={
         dom: 't',
         pageLength: -1,
+        autoWidth:false,
         lengthMenu: [[25, 50, 75, -1], [25, 50, 75, "All"]],
         columns: [            ],
         data : null,

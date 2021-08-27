@@ -74,7 +74,7 @@ export async function processSR(req: EX.Request, res: EX.Response) {
                 }
                 if (success)
                     sr.out.error_msg = "success";
-                await sr.postExec();
+                await sr.postExec(success);
             }
         } catch (e) {
             success = false;
