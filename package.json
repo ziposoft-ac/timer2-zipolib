@@ -19,7 +19,6 @@
     "@types/datatables.net": "^1.10.19",
     "@types/node-fetch": "^2.5.8",
     "@types/ws": "^7.4.0",
-    "better-sqlite3": "^7.4.3",
     "cheerio": "^1.0.0-rc.5",
     "csv-parse": "^4.16.0",
     "datatables": "^1.10.18",

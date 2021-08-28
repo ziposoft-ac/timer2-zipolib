@@ -18,7 +18,7 @@ export function getReadableDateTime() {
 }
 export function getReadableDateTimeFromMs(ts_milliseconds) {
     let date = new Date(ts_milliseconds);
-    return date.getMonth()+"/"+date.getDay()+"/"+date.getFullYear()+" "+date.toLocaleTimeString();
+    return (1+date.getMonth())+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.toLocaleTimeString();
 }
 function formatDate(date) {
     var hours = date.getHours();

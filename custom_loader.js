@@ -80,5 +80,6 @@ export const resolve = (specifier, parentModuleURL, defaultResolve) => {
         )
         newSpecifier+=".js";
     }
+
     return defaultResolve(newSpecifier, parentModuleURL);
 }
