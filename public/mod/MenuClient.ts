@@ -351,6 +351,9 @@ export class MenuInput extends MenuItem
     onChange(event)
     {
     }
+    onClick(ev: MouseEvent) {
+       ev.stopPropagation();
+    }
 
 
 }
