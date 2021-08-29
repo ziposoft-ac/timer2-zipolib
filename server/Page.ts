@@ -53,9 +53,9 @@ export class PageServer {
     constructor(props: PageProps) {
         this.props = props;
         if (props.req) {
-            console.log("cookies:", props.req.cookies);
+            //console.log("cookies:", props.req.cookies);
             this.debug = props.req.cookies.debug ?? false;
-            console.log("this.debug:", this.debug);
+            //console.log("this.debug:", this.debug);
             this.debug = true;
             let ip = <string>this.props.req.headers['x-forwarded-for'] || this.props.req.socket.remoteAddress;
             this.staticData.info.ip = ip;
