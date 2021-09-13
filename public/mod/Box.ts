@@ -43,11 +43,15 @@ export class Box
 
         //this.titlewrap=$.create("div","zs_box_header");
         //this.titlewrap.appendChild(this.text);
-        this.elmTitle=$.create("div");
+        if(text)
+        {
+            this.elmTitle=$.create("div");
 
-        this.elmTitle.textContent=text;
-        this.elmTitle.onclick=(ev)=>{return this.onTextClick(ev);}
-        this.elm.appendChild(this.elmTitle);
+            this.elmTitle.textContent=text;
+            this.elmTitle.onclick=(ev)=>{return this.onTextClick(ev);}
+            this.elm.appendChild(this.elmTitle);
+        }
+
 
 
         this.setShow(shown);
@@ -133,14 +137,20 @@ export class BoxList extends Box
     items: Box[]=[];
     elmWrap : HTMLDivElement;
     statement : BoxStatement=null;
+    coverThumb : HTMLImageElement=null;
+
 
     constructor(parent:BoxList, type:string,
-                text: string,htmlStatement:string,
+                text: string,
+                htmlStatement:string,
+                urlCoverThumb:string,
                 shown=true,expanded=false,id:string=null) {
         super(parent,type,text,shown,expanded);
 
 
         this.elmWrap=$.create("div","zs_box_list_wrap");
+        this.coverThumb=$.create("img","zs_box_cover_img");
+        this.coverThumb.src=urlCoverThumb;
         if(htmlStatement)
         {
 
@@ -148,10 +158,15 @@ export class BoxList extends Box
             this.elm.appendChild(this.statement.elm);
 
         }
+        this.elm.appendChild(this.coverThumb);
 
         this.elm.classList.add("zs_box_list");
-        this.elmTitle.className="zs_box_header";
-        this.elmTitle.classList.add('header'+this.level)
+        if(this.elmTitle)
+        {
+            this.elmTitle.className="zs_box_header";
+            this.elmTitle.classList.add('header'+this.level)
+        }
+
         if(id)
             this.elm.id=id;
         this.elm.appendChild(this.elmWrap);
@@ -263,24 +278,9 @@ export class BoxList extends Box
 
 
         }
+        this.parent.elmWrap.appendChild(this.elm);
         this.toggle();
         return true;
-    }
-}
-export class BoxProject extends BoxList
-{
-    constructor(parent:BoxList, type:string,
-                text: string,htmlStatement:string,
-                shown=true,expanded=false,id:string=null) {
-        super(parent,type,text,htmlStatement,shown,expanded,id);
-    }
-}
-export class BoxGroup extends BoxList
-{
-    constructor(parent:BoxList, type:string,
-                text: string,htmlStatement:string,
-                shown=true,expanded=false,id:string=null) {
-        super(parent,type,text,htmlStatement,shown,expanded,id);
     }
 }
 export class BoxImage extends Box
@@ -299,12 +299,18 @@ export class BoxImage extends Box
         this.thumbUrl=url;
         if(shown)
             this.img.src= thumbnail;
+
+
         this.img.title=text;
         this.elm.classList.add("zs_box_image");
         this.elm.appendChild(this.img);
-        this.elmTitle.className="image_label";
-        // re-appending moves the text under the image
-        this.elm.appendChild(this.elmTitle);
+        if(this.elmTitle)
+        {
+            this.elmTitle.className="image_label";
+            // re-appending moves the text under the image
+            this.elm.appendChild(this.elmTitle);
+        }
+
 
     }
 
@@ -354,6 +360,21 @@ export class BoxImage extends Box
     }
 
 }
+export class CoverImage  extends BoxImage
+{
+
+    constructor(parent:BoxList,url:string,thumbnail:string,
+                shown=true) {
+        super(parent,"cover_img",null,url,thumbnail);
+
+    }
+    onClick(ev:MouseEvent)
+    {
+        return this.parent.onClick(ev);
+
+    }
+
+}
 export class BoxNews extends Box
 {
 
@@ -382,6 +403,7 @@ export class BoxStatement extends Box
     elmSeeMore: HTMLDivElement;
     constructor(parent:BoxList,html: string,shown=true) {
         super(parent,null,"");
+        if(this.elmTitle)
         this.elmTitle.innerHTML=html;
         this.elm.classList.add("zs_box_statement");
         this.elmSeeMore=$.create("div","zs_box_readmore");
