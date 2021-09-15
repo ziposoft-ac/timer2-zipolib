@@ -1,5 +1,6 @@
 
 import * as Time from "./Time.js"
+import * as R from "../../../public/client/Requests";
 class RowContext
 {
     show_child=false;
@@ -79,6 +80,8 @@ export class ZDataTable
 
         this.dt.rows.add(data);
         this.dt.draw(false);
+
+
     }
     rowCreateCallback(row, data,dataIndex)
     {

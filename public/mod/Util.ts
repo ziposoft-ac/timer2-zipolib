@@ -16,7 +16,37 @@ export async function mergeObj(src:Object,dest:Object) {
             if(key in dest)
                 dest[key]=src[key];
 }
+type PromExec = (data:any)=>void;
+interface SemWait
+{
+    timer:NodeJS.Timer;
+    resolve:PromExec;
+}
+export class Semaphore
+{
 
+    waiting =new Set<SemWait>();
+
+    async waitOn(timeout:number) : Promise<any> {
+        return new Promise(resolve =>
+        {
+            let semWait={timer:null,resolve};
+            semWait.timer=setTimeout(()=>{
+                this.waiting.delete(semWait);
+                resolve(null);
+            },timeout);
+            this.waiting.add(semWait);
+        });
+    }
+    release(data:any) {
+        this.waiting.forEach((semWait)=>
+        {
+            clearTimeout(semWait.timer);
+            semWait.resolve(data);
+        });
+        this.waiting.clear();
+    }
+};
 export class Serialze
 {
     waiting = [];
