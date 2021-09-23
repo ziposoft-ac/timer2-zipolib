@@ -253,6 +253,11 @@ export class Factory
             this.addClass(c);
         }
     }
+    newType(type:string) : Object
+    {
+        let c=this.classes[type];
+        return (c?new c(): null);
+    }
     newObj(type:string) : Object
     {
         let c=this.classes[type];
