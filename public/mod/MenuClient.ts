@@ -54,21 +54,21 @@ abstract class MenuBase
     onMouseEnter(ev:MouseEvent)  { }
     onMouseLeave(ev:MouseEvent) {  }
     contract() {}
-    dataSet(val):boolean
+    dataSet(val):void
     {
         if(this.props.setValue)
         {
             this.props.setValue(val);
-            return true;
         }
         if(this.props.key)
         {
             this.parent.dataSetKey(this.props.key,val);
-            return true;
 
         }
         this.value=val;
-        return false;
+        if(this.props.onValueChange)
+            this.props.onValueChange(val);
+
     }
     dataGet() : any{
         if(this.props.getValue)
@@ -451,7 +451,6 @@ export class MenuBoolCookie extends MenuBool
         {
             Cookies.remove(this.props.key);
         }
-        return true;
     }
     dataGet() : any{
         return Cookies.get(this.props.key)!=undefined ;

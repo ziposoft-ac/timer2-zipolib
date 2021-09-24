@@ -41,6 +41,7 @@ export class Semaphore
     release(data:any) {
         this.waiting.forEach((semWait)=>
         {
+
             clearTimeout(semWait.timer);
             semWait.resolve(data);
         });

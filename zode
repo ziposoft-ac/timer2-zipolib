@@ -4,8 +4,8 @@ if [ "$#" -lt 1 ]; then
     echo "need script name"
     exit;
 fi
-zipo_root=$HOME/www/zipolib
-proj_root_default=$HOME/www/ziposoft
+zipo_root=/ac/www/zipolib
+proj_root_default=/ac/www/ziposoft
 proj_root=
 findup () {
   path=$(pwd)

@@ -27,6 +27,8 @@ export interface IBase
     key?: string;
     getValue? : ()=> any;
     setValue? : (any)=> void;
+    onValueChange? : (any)=> void;
+
     access?: AccessLevel;
 
 }

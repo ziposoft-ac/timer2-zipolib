@@ -12,6 +12,7 @@ if (typeof window === 'undefined')
 
 export class ClientRequestT<PARAMS,DATA>
 {
+    abortController = new AbortController();
 
     path:string="/";
     req: AjaxRequest<PARAMS,DATA>;
@@ -67,6 +68,11 @@ export class ClientRequestT<PARAMS,DATA>
             console.log("SERVER:",line);
         }
     }
+    abort()
+    {
+        console.log("Aborting request:",this.requestId);
+        this.abortController.abort();
+    }
     async fetchPost() : Promise<AjaxResponseT<DATA>>
     {
         let res : Response=null;
@@ -76,6 +82,7 @@ export class ClientRequestT<PARAMS,DATA>
         try
         {
             res = await globalThis.fetch(this.path,{
+                signal:this.abortController.signal,
                 method: 'post',
                 body:  JSON.stringify(this.in),
                 headers: {
