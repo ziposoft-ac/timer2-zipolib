@@ -1,4 +1,4 @@
-import sqlite from '/usr/local/lib/node_modules/better-sqlite3/lib/index.js';
+import sqlite from 'better-sqlite3';
 import {DataObj, DataObjMeta, DoConT, getMeta,FieldSet} from "@zs_client/zb/DataObj"
 import path from "path";
 import * as FD from "@zs_client/zb/Decor"

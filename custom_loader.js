@@ -72,7 +72,7 @@ export const resolve = (specifier, parentModuleURL, defaultResolve) => {
     console.log("defaultResolve:",defaultResolve);
 
 */
-    if(!(newSpecifier.endsWith(".js")||newSpecifier.endsWith(".json")))
+    if(!(newSpecifier.endsWith(".cjs")||newSpecifier.endsWith(".js")||newSpecifier.endsWith(".json")))
     {
         if(newSpecifier.startsWith("/")
             ||newSpecifier.startsWith(".")

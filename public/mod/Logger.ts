@@ -16,13 +16,20 @@ export class Logger
     log(...args: any[]) {
         let str=args.join();
         this.lines.push(str);
+        this.logString(str);
         if(this.echo_console)
             console.log(...args);
     };
+
+    logString(line:string)
+    {
+
+    }
     error(...args: any[]) { this.log(args); }
-    warn(...args: any[]) { if(this.level>=LogLevel.warn) this.log(args); }
-    info(...args: any[]) { if(this.level>=LogLevel.info) this.log(args); }
-    verb(...args: any[]) { if(this.level>=LogLevel.verb) this.log(args); }
+    warn(...args: any[]) { if(this.level>=LogLevel.warn) this.log(...args); }
+    info(...args: any[]) { if(this.level>=LogLevel.info) this.log(...args); }
+    verb(...args: any[]) { if(this.level>=LogLevel.verb) this.log(...args); }
+    debug(...args: any[]) { if(this.level>=LogLevel.debug) this.log(...args); }
 
 
     getAllAsString() : string
@@ -52,7 +59,7 @@ export class Logger
         }
     }
     echo_console=true;
-    level=3;
+    level=2;
     stack()
     {
         let e=new Error();
