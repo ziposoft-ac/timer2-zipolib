@@ -1,5 +1,6 @@
 import {Req} from "/zs_client/Ajax";
-import * as EX from "express";
+import * as Fastify from "fastify";
+
 import {makeSR, ServerRequest} from "@zs_server/ServerRequest";
 import {gObjFactory} from "/zs_client/Util";
 
@@ -35,7 +36,7 @@ export function getSR(id: string): typeof ServerRequest {
 }
 
 
-export async function processSR(req: EX.Request, res: EX.Response) {
+export async function processSR(req: Fastify.FastifyRequest, res: Fastify.FastifyReply) {
 
     let reqId = req.body["requestId"];
     let sr: ServerRequest;
@@ -103,7 +104,7 @@ export async function processSR(req: EX.Request, res: EX.Response) {
         let json = gObjFactory.saveInPlace(sr.out, true);
         res.send(json);
     } else
-        res.json(sr.out);
+        res.send(sr.out);
     try {
         sr.postSend();
     } catch (e) {

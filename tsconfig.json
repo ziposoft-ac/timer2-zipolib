@@ -13,17 +13,24 @@
     "removeComments": true,
     "sourceMap": true,
     "resolveJsonModule": true,
-    "baseUrl" : "./",
+    "baseUrl" : ".",
     "paths" :
     {
+      "/node/*" : ["./node_modules/*"],
       "/zs_client/*": ["./public/mod/*"],
       "@zs_client/*": ["./public/mod/*"],
-      "@zs_server/*": ["./server/*"]
+      "@zs_server/*": ["./server/*"],
+
     },
     "disableSolutionSearching": true,
 
   },
-
+  "ignore":
+  [
+    "./reference",
+    "./node_modules",
+    "./data"
+  ],
   "exclude":
   [
 

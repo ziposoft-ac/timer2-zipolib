@@ -1,17 +1,17 @@
-import {gEnv} from '@zs_server/Env';
-import * as P from '@zs_server/Page';
-import {PageMenu} from '@zs_server/PageMenu';
-import * as Menu from "@zs_server/Menu";
+import {gEnv} from './Env';
+import * as P from './Page';
+import {PageMenu} from './PageMenu';
+import * as Menu from "./Menu";
 import * as IM from "/zs_client/IMenu";
-import * as express from 'express';
+import * as Fastify from "fastify";
 //import Url from 'url-parse'
 import * as fs from 'fs'
 import {Dirent} from 'fs'
 import pathlib from "path";
-import {Request, Response} from "express";
 import {processSR, registerSR} from "@zs_server/RequestHandler";
-import {makeSR} from "@zs_server/ServerRequest";
-import Zipo from "@zs_server/Zipo";
+import Zipo from "./Zipo";
+import * as FU from "./FileUtil"
+import {Router} from "@zs_server/Router";
 
 export class TestViewerPage extends PageMenu
 {
@@ -20,7 +20,7 @@ export class TestViewerPage extends PageMenu
         super(props);
 
 
-        this.title=props.req.path;;
+        this.title=props.req.url;;
 
     }
     header(): string
@@ -36,20 +36,16 @@ export class TestViewerPage extends PageMenu
     tree_server: string="";
     tree_client: string="";
     async buildmenu() {
-        let path_server_tests=gEnv.path("server/testpages");
         let path_client_pages=gEnv.path("public/pages");
 
         let pagedir: IM.IMenu= Menu.Menu( "pagedir","PAGE DIR",IM.AccessLevel.Debug  ,[]);
-        let testdir= Menu.Menu( "testdir","TEST DIR",IM.AccessLevel.Debug,[]);
         let settings= Menu.Menu( "settings","Settings",IM.AccessLevel.Debug,[
             Menu.BoolCookie("Debug","debug"),
         ]);
 
-        this.menubar.items.push(testdir,pagedir,settings);
-        this.tree_server=await this.appendDirList(testdir,
-            this.tree_server,path_server_tests,"/test/page") ;
+        this.menubar.items.push(pagedir,settings);
         this.tree_client=await this.appendDirList(pagedir,
-            this.tree_client,path_client_pages,"/test/mod") ;
+            this.tree_client,path_client_pages,"/test/") ;
     }
     async build() {
         await this.buildmenu();
@@ -134,97 +130,105 @@ class TestViewerErrorPage extends TestViewerPage
 
 }
 // Init shared
-export const TestRoute = express.Router();
 
 
-TestRoute.get('*',
-    async (req: express.Request, res: express.Response, next) => {
 
-    let exception : any=null;
-    let pageObj : P.PageServer =null;
-    let pageHtml: string=null;
-    try {
-        //let urlParts=new Url(req.url);
+async function routes(fastify, options){
+    fastify.get('/', async function(request, reply) {
+        return {hello: 'world'}
+    }),
 
-        let parts=req.params[0].split('/');
-        let partnum=parts.length;
-        if(!parts[partnum-1])
-            partnum--;
-        if(partnum<2)
+        fastify.get('/bye', async function(request, reply) {
+            return {bye: 'good bye'}
+        })
+}
+let serverPageDir=Zipo.path('server/pages');
+let clientPageDir=Zipo.path('public/pages');
+
+export class TestRoute extends Router
+{
+
+    route(fastify : Fastify.FastifyInstance)
+    {
+        fastify.get('*',this.handler)
+        fastify.post("*", async (req: Fastify.FastifyRequest, res: Fastify.FastifyReply) => {
+
+            processSR(req,res);
+        });
+        
+    }
+    constructor() {
+        super();
+
+
+    }
+    async handler(req: Fastify.FastifyRequest, res: Fastify.FastifyReply)
+    {
+
+        let exception : any=null;
+        let pageObj : P.PageServer =null;
+        let pageHtml: string=null;
+        let moduele_path=req.params[0];
+        let serverPage=serverPageDir+moduele_path+".js";
+        if(await FU.fileExists(serverPage))
         {
-            pageObj=new TestViewerPage({req});
+            await import(serverPage).then((mod)=>{
+                let x=mod.default;
+                console.log("Server Page Classname ",x);
+
+                pageObj=new x({req});
+                pageObj.page_module="/pages/"+moduele_path;
+
+            }).catch((e)=>{
+                console.log("No server module",e.message);
+            });
         }
-        else
+
+        if(!pageObj)
         {
-            let pagename =parts[partnum-1];
-            if(!pagename)
-            {
-                partnum--;
-                pagename =parts[partnum-1];
-            }
-            let base=parts[1];
-            let path=parts.slice(2,partnum-1).join('/');
-            if(path)
-                path+="/";
-            console.log("path:",path);
-            console.log("pagename:",pagename);
-            console.log("base:",base);
-            pagename=pagename.split("?")[0];
-            if(pagename)
-            {
-                //TODO support static files?
-                if(pagename.includes("."))
-                    return next();
-            }
 
-            if(base=="page")
-            {
-                let fullpath=Zipo.path('server/testpages',path,pagename)+".js";
-
-                //let modpath=`./testpages/${path}${pagename}.js`;
-                await import(fullpath).then((mod)=>{
-                    let x=mod.default;
-                    console.log("Server Page Classname ",x);
-                    pageObj=new x({req});
-                }).catch((e)=>{
-                    console.log("No test module",e.message);
-                });
-            }
-            else
-            {
+            try {
                 pageObj=new TestViewerPage({req});
-                let fullpath=Zipo.path('public/pages',path,pagename)
-                pageObj.page_module=fullpath;
+                if(await FU.fileExists(clientPageDir+moduele_path+".js"))
+                {
+                    pageObj.page_module="/pages/"+moduele_path;
+                }
+                else// PAGE NOT FOUND
+                {
+
+                }
+            }
+            catch (e) {
+                console.log("error new TestViewerPage:",e);
+                pageObj=new TestViewerErrorPage({req},e);
+            }
+
+        }
+        try {
+            try {
+                await pageObj.build();
+            }
+            catch (e) {
+                console.log("exception building:",e);
+                pageObj=new TestViewerErrorPage({req},e);
+                await pageObj.build();
 
             }
-        }
+            pageObj.sendResponse(res);
 
 
-        try {
-            await pageObj.build();
         }
         catch (e) {
-            console.log("exception building:",e);
-            pageObj=new TestViewerErrorPage({req},e);
-            await pageObj.build();
+            pageObj=new P.PageException({req},e);
+            pageObj.sendResponse(res);
 
         }
-        pageObj.sendResponse(res);
-
-
-    }
-    catch (e) {
-        pageObj=new P.PageException({req},e);
-        pageObj.sendResponse(res);
-
     }
 
-});
 
 
 
-TestRoute.post("*", async (req: Request, res: Response) => {
+}
 
-    processSR(req,res);
-});
+
 

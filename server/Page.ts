@@ -1,7 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import {Dirent} from "fs";
-import * as express from "express";
+import * as Fastify from "fastify";
+import { FastifyCookieOptions } from 'fastify-cookie'
 
 import {PageData} from "/zs_client/PageData";
 import pretty from "pretty";
@@ -12,7 +13,7 @@ const gFetchversion = Date.now();
 export interface PageProps {
     title?: string;
     module?: string;
-    req: express.Request;
+    req: Fastify.FastifyRequest;
     main?: string;
 }
 
@@ -54,7 +55,7 @@ export class PageServer {
         this.props = props;
         if (props.req) {
             //console.log("cookies:", props.req.cookies);
-            this.debug = props.req.cookies.debug ?? false;
+            //this.debug = props.req.cookies.debug ?? false;
             //console.log("this.debug:", this.debug);
             this.debug = true;
             let ip = <string>this.props.req.headers['x-forwarded-for'] || this.props.req.socket.remoteAddress;
@@ -162,7 +163,7 @@ export class PageServer {
         return page;
     }
 
-    sendResponse(response: express.Response) {
+    sendResponse(response: Fastify.FastifyReply) {
         if (this.redirectUrl) {
             response.redirect(this.redirectUrl);
             console.log("Redirect to: " + this.redirectUrl);

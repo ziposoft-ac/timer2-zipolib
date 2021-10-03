@@ -7,7 +7,8 @@
   "aliases": {
     "/zs_client": "./public/mod",
     "@zs_client": "./public/mod",
-    "@zs_server": "./server"
+    "@zs_server": "./server",
+    "/node": "node_modules"
   },
   "scripts": {},
   "keywords": [],
@@ -16,12 +17,16 @@
   "dependencies": {
     "@types/cheerio": "^0.22.23",
     "@types/datatables.net": "^1.10.19",
+    "@types/leaflet": "^1.7.5",
     "@types/ws": "^7.4.0",
     "cheerio": "^1.0.0-rc.5",
     "csv-parse": "^4.16.0",
     "datatables": "^1.10.18",
-    "express": "^4.17.1",
+    "fastify": "^3.12.0",
+    "fastify-cookie": "^5.3.1",
+    "fastify-static": "^4.0.1",
     "got": "^11.8.1",
+    "leaflet": "^1.7.1",
     "pretty": "^2.0.0",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.19",
