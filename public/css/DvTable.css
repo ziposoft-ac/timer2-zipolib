@@ -1,0 +1,39 @@
+
+.dvTable
+{
+
+    position: relative;
+    border-collapse: collapse;
+    width: 100%;
+    max-height: 100%;
+}
+.dvTable thead
+{
+
+}
+.dvTable thead tr
+{
+
+}
+.dvTable tbody
+{
+    width: 100%;
+}
+.dvTable th
+{
+
+    text-align: left;
+    top: 0;
+    position: sticky;
+    background-color: black;
+    border: black solid 1px;
+    color: white;
+
+}
+.dvTable td
+{
+    width: max-content;
+    white-space:nowrap;
+
+
+}

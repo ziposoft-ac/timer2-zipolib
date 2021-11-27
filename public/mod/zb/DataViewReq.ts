@@ -1,6 +1,21 @@
 import * as ajax from "../Ajax.js"
-import * as DO from "./DataObj.js"
-import * as F from "./Fields.js"
+import {IField,IFieldSet} from "/zs_client/zb/IField.js";
+import {DataObj} from "/zs_client/zb/DataObj.js";
+
+export class SelectParams
+{
+    orderby="id";
+    limit=100;
+    offset=0;
+}
+
+export class SelectResult
+{
+    objType:string="unknown";
+    arr:object[]=[];
+    expanded:object[]=[];
+    fields: IFieldSet={ set: {}};
+}
 
 export class ReqGetDbTypes extends ajax.Req(
     class{}, class
@@ -14,7 +29,6 @@ export class ReqGetDbTypes extends ajax.Req(
 
 export class ReqDataParams
 {
-    dbType="zat";
     dbName="stravacache.db";
     tblName: string=null;
 }
@@ -32,17 +46,45 @@ export class ReqGetDb extends ajax.Req(
 {
 
 }
+export class Record
+{
+    objId:number=-1;
+    type: string="unknown";
+    obj:DataObj=null;
+    expanded:object={};
+    fields: IFieldSet={ set: {}};
+}
+
+export class ReqGetRecord extends ajax.Req(
+    class extends ReqDataParams
+    {
+        objId:number=-1;
+    },
+    Record
+)
+{
+    override createObjs=true;
+    override clientPostRx() {
+        if(!(this.out.data.obj instanceof DataObj))
+        {
+            let obj=new DataObj();
+            this.out.data.obj=Object.assign(obj,this.out.data.obj);
+
+        }
+    }
+}
 
 export class ReqGetRecords extends ajax.Req(
-    ReqDataParams,
+    class extends ReqDataParams
+    {
+        select=new SelectParams();
+    },
     class
     {
-        objType:string="unknown";
-        arr:object[]=[];
-
-        fields: DO.IFieldSet={ set: {}};
+        selectRes:SelectResult=null;
     }
 )
 {
+    override createObjs=true;
 
 }

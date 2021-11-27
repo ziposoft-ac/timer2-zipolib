@@ -1,12 +1,15 @@
-import sqlite from 'better-sqlite3';
-import {DataObj, DataObjMeta, DoConT, getMeta,FieldSet} from "@zs_client/zb/DataObj"
+import  SQL from 'better-sqlite3';
+import {SelectParams, SelectResult} from "/zs_client/zb/DataViewReq.js";
+
+import {DataObj, DataObjMeta, DoConT, getMeta, FieldSet, } from "/zs_client/zb/DataObj"
 import path from "path";
-import * as FD from "@zs_client/zb/Decor"
+import * as FD from "/zs_client/zb/Decor"
 import * as fs from 'fs'
+
 
 export class SqlSelect
 {
-    stm : sqlite.Statement = null;
+    stm : SQL.Statement = null;
     exec(zb: ZipoBase, getsql : ()=> string ,...args: any[])
     {
         let all=[];
@@ -40,17 +43,17 @@ export class SqlSelect
 }
 class SqlTrans
 {
-    stm : sqlite.Statement = null;
+    stm : SQL.Statement = null;
     trans =null;
     sql : string;
-    exec(commit: boolean,obj  : DataObj,zb: ZipoBase, getsql : ()=> string ) :  sqlite.RunResult
+    exec(commit: boolean,obj  : DataObj,zb: ZipoBase, getsql : ()=> string ) :  SQL.RunResult
     {
         if(!obj)
         {
             throw new Error("SqlTrans obj is null");
         }
         let row=obj.copyToDbRow();
-        let result: sqlite.RunResult={changes:0, lastInsertRowid:0};
+        let result: SQL.RunResult={changes:0, lastInsertRowid:0};
 
         if(!this.trans)
         {
@@ -108,6 +111,8 @@ export abstract class TableBase
     meta : DataObjMeta;
     cols : object;
     name : string;
+    abstract newObj():DataObj;
+    abstract  getObjById(id:number) :  DataObj;
 
     get fields() :  FieldSet
     {
@@ -140,8 +145,9 @@ export abstract class TableBase
 
    // abstract createFieldSet():  F.FieldSet;
 
-    stm_create : sqlite.Statement = null;
-    stm_get_all : sqlite.Statement = null;
+   // stm_create : SQL.Statement = null;
+    stm_get_all : SQL.Statement = null;
+    select_slice  =new SqlSelect();
     select_by_id  =new SqlSelect();
     select_by_rowid  =null;
     private select_arr : Record<string, SqlSelect >={};
@@ -151,6 +157,22 @@ export abstract class TableBase
             this.select_arr[name]=new SqlSelect();
         return this.select_arr[name];
     }
+
+    runSelect(sql:string) : any
+    {
+
+        try
+        {
+            let statment= this.zb.sdb.prepare(sql);
+            return statment.all();
+        }
+        catch(e)
+        {
+            console.log(sql);
+            console.log(e);
+        }
+    }
+
     execSql(sql:string) : any
     {
 
@@ -191,13 +213,12 @@ export abstract class TableBase
 
 
     };
-    abstract  getObjById(id:number) :  DataObj
 
     getRowByTxtId(id:string)
     {
         let rows= this.select_by_id.exec(this.zb,()=>{
 
-            let sql=`SELECT rowid,* FROM  ${this.name} WHERE id = ?`;
+            let sql=`SELECT * FROM  ${this.name} WHERE id = ?`;
             return sql;
         },id);
         if(rows.length)
@@ -207,23 +228,10 @@ export abstract class TableBase
         }
         return null;
     }
-    getRowByRowId(rowid:number)
-    {
-        let q=this.select_by_rowid ?? (this.select_by_rowid=new SqlSelect());
-        let rows= q.exec(this.zb,()=>{
-            return `SELECT rowid,* FROM  ${this.name} WHERE rowid = ?`;
-        },rowid);
-        if(rows.length) {
-            let row=rows[0];
-            if(!row.rowid) row.rowid=rowid;
-            return row;
-        }
-        return null;
-    }
     getRowById(id:number)
     {
         let rows= this.select_by_id.exec(this.zb,()=>{
-            let sql=`SELECT rowid,* FROM  ${this.name} WHERE id = ?`;
+            let sql=`SELECT * FROM  ${this.name} WHERE id = ?`;
             return sql;
         },id);
         if(rows.length)
@@ -254,12 +262,12 @@ export abstract class TableBase
                     wh+=' AND ';
                 wh+=`${key}= :${key} `;
             }
-            let sql=`SELECT rowid,* FROM  ${this.name} WHERE ${wh} `;
+            let sql=`SELECT * FROM  ${this.name} WHERE ${wh} `;
             return sql;
         },cond);
         return rows;
     }
-
+    /*
     getSummaryOfObject(o:DataObj ) : string
     {
         let flds=this.meta.fields;
@@ -276,6 +284,20 @@ export abstract class TableBase
         }
         return h;
     }
+
+     */
+    rowsToObjs(rows ) : DataObj[]
+    {
+        let arr:DataObj[] =[];
+        for(let row of rows)
+        {
+            let obj = this.newObj();
+            obj.copyFromDbRow(row);
+            arr.push(obj);
+        }
+        return arr;
+    }
+
     getRows()
     {
 
@@ -293,6 +315,61 @@ export abstract class TableBase
                 break;
         }
     };
+    getRowsSlice(params:SelectParams) : DataObj[]
+    {
+
+        let sql=`SELECT * FROM  ${this.name} ORDER BY ${params.orderby} LIMIT  ${params.limit} OFFSET  ${params.offset}`;
+        let rows=this.runSelect(sql);
+        return this.rowsToObjs(rows);
+
+        /*
+        let rows= this.select_by_id.exec(this.zb,()=>{
+            let sql=`SELECT * FROM  ${this.name} ORDER BY :orderby LIMIT :limit OFFSET :offset`;
+            return sql;
+        },params);
+        return this.rowsToObjs(rows);
+
+         */
+    }
+    objExpand(obj:DataObj) : object
+    {
+        let flds=this.meta.fields;
+        let ex:object=null;
+        for(let f of flds)
+        {
+            let idx=f.getIndex(obj);
+            if(idx)
+            {
+                let tbl=this.zb.getTable(idx.indexedType.name);
+                if(tbl)
+                {
+                    let obj=tbl.getObjById(idx.id);
+                    ex??={};
+                    ex[f.id]=obj;
+                }
+            }
+        }
+        return ex;
+    }
+    getRowsSliceEx(params:SelectParams) : SelectResult
+    {
+
+        let sr=new SelectResult();
+        let rows=this.getRowsSlice(params);
+        let flds=this.meta.fields;
+
+        for(let i=0;i<rows.length;i++)
+        {
+            let obj=rows[i];
+            let ex=this.objExpand(obj);
+            if(ex)
+                sr.expanded[i]=ex;
+
+        }
+        sr.fields=flds.getAsObject();
+        sr.arr=rows;
+        return sr;
+    }
 }
 
 type funcPointer = (...args : any[]) => any;
@@ -322,13 +399,13 @@ export class Table<T extends DataObj> extends TableBase
 
     addNew(objIn : Partial<T>) : T
     {
-        let o=this.newObj();
+        let o=this.newObjT();
         o.merge(objIn);
         try {
             let r=this.insert(o);
             if(r.changes)
             {
-                let row=this.getRowByRowId(<number>r.lastInsertRowid);
+                let row=this.getRowById(<number>r.lastInsertRowid);
                 Object.assign(o,row);
             }
         }
@@ -339,16 +416,21 @@ export class Table<T extends DataObj> extends TableBase
         }
         return o;
     }
-    newObj():T
+    newObj():DataObj
+    {
+        return new (this.ctor)();
+    }
+    newObjT():T
     {
         let obj : T = new (this.ctor)();
-        // defaults set in ctor
         return obj;
     }
     dumpCols()
     {
         //console.log(this.ctor.cols);
     }
+    getRowsSliceT(params:SelectParams) : T[] { return  <T[]>this.getRowsSlice(params); }
+
 
     setObjBy(keys : Array<string>, obj_in : T)
     {
@@ -362,10 +444,10 @@ export class Table<T extends DataObj> extends TableBase
         let existing : T = this.getObjByQueryName(name,cond);
         if(existing)
         {
-            let rowid=existing.rowid;//IMPORTANT!! SAVE ROW ID
+            let id=existing.id;//IMPORTANT!! SAVE ROW ID
             Object.assign(existing,obj_in);
-            existing.rowid=rowid;
-            this.updateByRowId(existing,true);
+            existing.id=id;
+            this.updateById(existing,true);
 
 
         }
@@ -374,11 +456,12 @@ export class Table<T extends DataObj> extends TableBase
             this.insert(obj_in,true);
         }
     }
+    /*
     transaction(funcPointer,...args : any[])
     {
         let trans=this.zb.sdb.transaction( funcPointer);
         trans(args);
-    }
+    }*/
     setObjsById(objs: T[]) {
         let trans=this.zb.sdb.transaction((objs) => {
             for(let obj of objs)
@@ -417,6 +500,22 @@ export class Table<T extends DataObj> extends TableBase
         }
         return arr[0];
     }
+
+    getExpanded(objs: T[]): object[]
+    {
+        let indexed=[];
+        for(let o of objs)
+        {
+            for(let f of this.fields)
+            {
+                //if(f.getDbType())
+            }
+
+        }
+        return indexed;
+    }
+
+
     getObjsByCond(cond : Partial<T>) : T[]
     {
         // This creates a new select obj for every call
@@ -442,7 +541,7 @@ export class Table<T extends DataObj> extends TableBase
         let row= this.getRowById(id);
         if(row)
         {
-            let obj:T = this.newObj();
+            let obj:T = this.newObjT();
             return obj.copyFromDbRow(row);
 
         }
@@ -508,10 +607,6 @@ export class Table<T extends DataObj> extends TableBase
 
         return this.updateBy(obj,"id",commit);
     };
-    updateByRowId(obj : T,commit:boolean)
-    {
-        return this.updateBy(obj,"rowid",commit);
-    };
     updateBy(obj : T,key_id: string,commit:boolean)
     {
         //TODO - this is bad. The obj:T must be a class instance, cant be a partial
@@ -528,12 +623,14 @@ export class Table<T extends DataObj> extends TableBase
             return sql;
         })
     };
+
+
     rowsToObjs(rows ) : T[]
     {
         let arr:T[] =[];
         for(let row of rows)
         {
-            let obj:T = this.newObj();
+            let obj:T = this.newObjT();
             obj.copyFromDbRow(row);
             arr.push(obj);
         }
@@ -550,7 +647,7 @@ export class Table<T extends DataObj> extends TableBase
         let arr:T[] =[];
         for(let row of rows)
         {
-            let obj:T = this.newObj();
+            let obj:T = this.newObjT();
             obj.copyFromDbRow(row);
             arr.push(obj);
         }
@@ -560,7 +657,7 @@ export class Table<T extends DataObj> extends TableBase
     {
         let obj:T=null;
         this.iterateRows((row)=>{
-            obj = this.newObj();
+            obj = this.newObjT();
             obj.copyFromDbRow(row);
 
             return callback(obj);
@@ -578,7 +675,6 @@ export class IdxString extends DataObj {
         this.txt=val;
 
     }
-    @FD.AutoKey id: number=null;
     @FD.Text txt: string = "";
 }
 export class TableIdxString<T extends IdxString> extends Table<T>
@@ -600,7 +696,9 @@ export class TableIdxString<T extends IdxString> extends Table<T>
 }
 export class ZipoBase
 {
-    sdb : sqlite.Database=null;
+    static openDbs : Record<string, ZipoBase>={};
+
+    sdb : SQL.Database=null;
     fullpath: string;
     name: string;
     tables: {
@@ -609,6 +707,7 @@ export class ZipoBase
     constructor(pathdir:string, name:string ) {
         this.name=name;
         this.fullpath=path.join(pathdir,name);
+        ZipoBase.openDbs[name]=this;
 
     }
     updateStructure()
@@ -638,7 +737,7 @@ export class ZipoBase
         return this.addTable(new Table<T>(classRef));
         /*
         let name=classRef.name;
-        let t=new Table<T>(classRef);
+        let t=new DvTable<T>(classRef);
         this.tables[name]=t;
         t.zb=this;
         return t;
@@ -668,7 +767,7 @@ export class ZipoBase
         if(this.sdb)
             return;
 
-        this.sdb=new sqlite(this.fullpath);
+        this.sdb=new SQL(this.fullpath);
         this.create();
 
     }
@@ -703,7 +802,7 @@ export class ZipoBase
 export function runtest() {
 
 
-    var db = new sqlite("database.db", {});
+    var db = new SQL("database.db", {});
 
     /*
     const table = db.prepare('CREATE TABLE IF NOT EXISTS cats (name, age)');

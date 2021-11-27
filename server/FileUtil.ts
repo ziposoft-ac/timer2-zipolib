@@ -72,7 +72,7 @@ export async function loadCsvFileAll(fullpath:string) : Promise<string[][]>
 
     return data;
 }
-export async function fileExists(filename) :Promise< boolean>
+export async function fileExists(filename) :Promise< fs.Stats>
 {
     let stats=null;
     let error=null;
@@ -86,10 +86,10 @@ export async function fileExists(filename) :Promise< boolean>
             {
                 error=err;
             }
-            return false;
+            return null;
         }
     );
-    return true;
+    return stats;
 }
 export async function getFileStat(filename) :Promise< { stats: fs.Stats, error: Object}>
 {

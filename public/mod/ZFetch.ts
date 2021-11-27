@@ -1,7 +1,6 @@
 var fetch=fetch;
 if (typeof(fetch) === 'undefined') {
     let nodefetch=await import('node-fetch');
-
     fetch=nodefetch.default;
 }
 export interface FetchResult<T> {

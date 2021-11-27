@@ -97,10 +97,10 @@ export async function processSR(req: Fastify.FastifyRequest, res: Fastify.Fastif
     let tsDone=process.hrtime(tsStart);
     sr.out.time_total_request=tsDone[0]*1000+tsDone[1]/1000000;
     const factsend = true;
-    if (factsend) {
-        /*
-            TODO - set types on objects, recreate objs on other side.
-        */
+
+
+
+    if (sr.req.createObjs) {
         let json = gObjFactory.saveInPlace(sr.out, true);
         res.send(json);
     } else

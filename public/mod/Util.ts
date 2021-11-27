@@ -6,6 +6,21 @@
  * Written by Anthony Corriveau <ac@ZipoSoft.com>  2018
  */
 
+
+export async function importClientServer(path:string)
+{
+    let mod;
+    if (typeof(process) === 'undefined') {
+        mod=await import('/zs_client/'+path);
+    }
+    else
+    {
+        mod=await import('@zs_server/'+path);
+    }
+    return mod;
+}
+
+
 export async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -140,7 +155,7 @@ export class Factory
             if(type)
             {
                 delete(objIn["__type__"]);
-                objOut=this.newObj(type);
+                objOut=this.newObjT(type);
             }
             else objOut={};
             for (const [k, value] of Object.entries(objIn)) {
@@ -170,7 +185,7 @@ export class Factory
             if(type)
             {
                 delete(objIn["__type__"]);
-                objOut=this.newObj(type);
+                objOut=this.newObjT(type);
             }
             else objOut={};
             for (const [k, value] of Object.entries(objIn)) {
@@ -220,29 +235,13 @@ export class Factory
     }
     saveInPlace(obj:object,pretty=false) : string
     {
-        let assignType=(obj:Object,depth) : void=>
-        {
-            if(!obj) return;
-
-            if(++depth > 10)
-                throw Error("Object assign recursion exceeds 10.");
-            for (const [, value] of Object.entries(obj))
-            {
-                if(typeof value === "object")
-                    assignType(value,depth);
-            }
-            if(obj.constructor.name in this.classes)
-            {
-                obj["__type__"]=obj.constructor.name;
-            }
-        }
-        assignType(obj,0);
+        this.setTypes(obj);
         return JSON.stringify(obj,null,(pretty?2:0));
     }
     addClass(c)
     {
         this.classes[c.name]=c;
-        console.log("Factory:",c.name);
+        //console.log("register class:",c.name);
 
     }
     constructor(
@@ -259,9 +258,13 @@ export class Factory
         let c=this.classes[type];
         return (c?new c(): null);
     }
-    newObj(type:string) : Object
+    newObjT(type:string) : Object
     {
         let c=this.classes[type];
+        if(!c)
+        {
+            console.log("class type not found:",type);
+        }
         return (c?new c(): new Object());
     }
 }

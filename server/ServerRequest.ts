@@ -1,4 +1,4 @@
-import {AjaxParams, AjaxParamsT, AjaxRequest, AjaxResponse, AjaxResponseT, ReqT} from "/zs_client/Ajax";
+import {AjaxParams, AjaxParamsT, AjaxRequest, AjaxResponse,AjaxRequestBase, AjaxResponseT, ReqT} from "/zs_client/Ajax";
 import {Logger} from "/zs_client/Logger";
 
 
@@ -7,6 +7,8 @@ export class ServerRequest
     requestId: string="none";
     in:AjaxParams;
     out:AjaxResponse;
+    req: AjaxRequestBase;
+
     logger=new Logger();
 
     log(...args: any[]) {
@@ -57,10 +59,10 @@ export class ServerRequestT<P,D> extends ServerRequest
 {
     get params() : P { return this.in.params }
     get data() : D { return this.out.data }
-    in:AjaxParamsT<P>;
-    out:AjaxResponseT<D>;
+    override in:AjaxParamsT<P>;
+    override out:AjaxResponseT<D>;
     //reqT :  ReqT<P,D>;
-    req: AjaxRequest<P,D>;
+    override req: AjaxRequest<P,D>;
     constructor(ajaxReqT: ReqT<P,D> ) {
         super( );
         this.requestId=ajaxReqT.name;

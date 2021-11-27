@@ -2,7 +2,7 @@ import * as IM from "./IMenu.js";
 
 import {MenuBar, MenuLink} from "./MenuClient.js";
 import {PageData, PageDataMenu} from "./PageData.js"
-import * as $ from "./Dom.js";
+import * as D from "./Dom.js";
 import Cookies from "./Cookies.js";
 import {tag} from "./Dom.js";
 
@@ -62,18 +62,13 @@ export class PageClientT<STATIC_DATA extends PageData> {
         //Object.assign(this.staticData, staticData);
         window["page"] = this;
         this.storageName = window.location.pathname;
-        window.onload = () => {
-
-
-            this.run();
-        }
-        this.elm_header = $.tag('header');
-        this.elm_main = $.tag('main');
+        this.elm_header = D.tag('header');
+        this.elm_main = D.tag('main');
         //console.log("client page constructor");
 
     }
 
-    run() {
+    async run() {
         console.log("run PageClientT");
         this.storageLoad();
     }
@@ -98,10 +93,22 @@ export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> ex
             this.menubar =new MenuBar(this.staticData.menubar);
 
         }
-        run() {
+        setHeader() {
+            let h = D.tag('header').clientHeight;
+            document.documentElement.style.setProperty('--header-height', h.toString());
+            console.log("header height:", h)
+    
+        }
+        async run() {
             super.run();
             console.log("run PageClientMenuT");
             this.menubar.updateDisplay();
+            window.onresize = () => this.setHeader();
+            screen.orientation.onchange = () => {
+                console.log("orientation");
+                this.setHeader();
+            }
+            this.setHeader();
         }
     }
 

@@ -115,15 +115,24 @@ export class PageServer {
             let path = this.imports[name];
             h += `<script type="module" >import * as mod from "${path}.js";window["${name}"]=mod;</script>`;
         }
-        h += `<script type="module" >
-                import ClientPage from "${this.page_module}.js?vers=${this.fetchVersion}";
-                window["page"]=new ClientPage(${staticDataJson});</script>`;
+        //language=HTML
+        h += `<script>
+                    window.isloaded=false;
+                    window.onload=()=>{
+                        window.isloaded=true;
+                    };
+                </script>
+            <script type="module" >
+                import pageClass from "${this.page_module}.js?vers=${this.fetchVersion}";
+                let page=new pageClass(${staticDataJson});
+                window["page"]=page;
+                if(!window.isloaded)
+                {
+                    await new Promise(function(resolve) { window.onload = resolve;});
+                }
+                page.run();
+                </script>`;
 
-        if (this.debug) {
-            //node_modules/source-map-support/browser-source-map-support.js
-            // ONLY FOR NODE, not browsers
-            //h+='<script src="/node/source-map-support/browser-source-map-support.js"></script><script>sourceMapSupport.install();</script>';
-        }
         if (this.googleTagId) {
             h += `<script async src="https://www.googletagmanager.com/gtag/js?id=${this.googleTagId}"></script>
             <script>window.dataLayer = window.dataLayer || [];
@@ -145,7 +154,7 @@ export class PageServer {
     }
 
     main(): string {
-        if (this.props["main"]) {
+        if (this.props.main) {
             return this.props.main;
         }
         return `defalt body`;
@@ -170,6 +179,7 @@ export class PageServer {
             return;
         }
         let pageHtml = this.fullpage();
+        response.type('text/html')
         response.send(pageHtml);
 
     }

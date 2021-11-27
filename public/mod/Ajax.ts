@@ -53,9 +53,15 @@ enum ReqLevel
     root,
     debug
 }
-export class AjaxRequest<PARAMS,DATA>
+export class AjaxRequestBase
 {
+    createObjs=false;
+
     reqLevel: ReqLevel=ReqLevel.admin;
+    clientPostRx() {}
+}
+export class AjaxRequest<PARAMS,DATA> extends AjaxRequestBase
+{
     in:AjaxParamsT<PARAMS>;
     out:AjaxResponseT<DATA>;
 }

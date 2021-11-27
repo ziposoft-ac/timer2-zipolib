@@ -27,12 +27,12 @@ export class ClientRequestT<PARAMS,DATA>
         this.path=path;
     }
 
-    async exec(params:Partial<PARAMS>=null) : Promise<AjaxResponseT<DATA>>
+    async exec(params:Partial<PARAMS>=null,debug=false) : Promise<AjaxResponseT<DATA>>
     {
         if(params)
             Object.assign(this.in.params,params);
 
-        return await this.fetchPost();
+        return await this.fetchPost(debug);
     }
     async action(act:string,params:Partial<PARAMS>=null) : Promise<AjaxResponseT<DATA>>
     {
@@ -73,7 +73,7 @@ export class ClientRequestT<PARAMS,DATA>
         console.log("Aborting request:",this.requestId);
         this.abortController.abort();
     }
-    async fetchPost() : Promise<AjaxResponseT<DATA>>
+    async fetchPost(debug=false) : Promise<AjaxResponseT<DATA>>
     {
         let res : Response=null;
 
@@ -113,11 +113,11 @@ export class ClientRequestT<PARAMS,DATA>
         }
         if(res.ok)
         {
-            const factbuild=true;
-            if(factbuild)
+            if(this.req.createObjs)
             {
                 let recv= await res.text();
-
+                if(debug)
+                    console.log(recv);
                 // @ts-ignore
                 this.req.out=Util.gObjFactory.load(recv);
             }
@@ -134,6 +134,7 @@ export class ClientRequestT<PARAMS,DATA>
             console.log("REQ",this.requestId+":"+this.in.action,"took:"+this.out.time_total_request);
             if(this.out.success)
             {
+                this.req.clientPostRx();
                 this.onData(this.out.data);
             }
             else
