@@ -64,11 +64,17 @@ export function create<K extends keyof HTMLElementTagNameMap>(tagName: K,cl:stri
     if(id) e.id=id;
     return e;
 }
-export function append<K extends keyof HTMLElementTagNameMap>(parent:HTMLElement,tagName: K,cl:string=null,id:string=null): HTMLElementTagNameMap[K]
+export function append<K extends keyof HTMLElementTagNameMap>(
+    parent:HTMLElement,tagName: K,
+    cl:string=null,
+    id:string=null,
+    text:string=null
+): HTMLElementTagNameMap[K]
 {
     let e: HTMLElementTagNameMap[K]= document.createElement(tagName);
     if(cl) e.className=cl;
     if(id) e.id=id;
+    if(text) e.innerText=text;
     parent.appendChild(e);
     return e;
 }

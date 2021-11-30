@@ -1,92 +1,34 @@
-
-
+import {IField, IFieldSet} from "/zs_client/zb/IField.js";
+import * as F from "/zs_homonym/Fields.js";
 import * as Util from "/zs_client/Util.js";
-import {IField,IFieldSet} from "/zs_client/zb/IField.js";
-import {Factory} from "/zs_client/Util.js";
 
 
-export type DoConT<T extends DataObj> = new () => T;
+export type FldConT<T extends F.Field> = new (iF:IField) => T;
 
-
-export type FldCon = new (iF:IField) =>  Field;
-
-export var fldFactory=new Map<string,FldCon>();
-
-
-
-
-export function FF (constructor) {
-    //console.log("FEILD TYPE:",constructor.name);
-    fldFactory.set(constructor.name,constructor);
-    //Util.gObjFactory.addClass(constructor);
-
-}
-
-export interface IndexIdInt
+export class FieldSetT<FT extends F.Field>
 {
-    indexedType: typeof DataObj;
-    id : number;
-
-}
-export abstract class Field
-{
-    get id() { return this.props.id; }
-    props: IField={id:"?",name:"?", showList: true,summary: false };
-    constructor(props:Partial<IField> ) {
-        this.props=Object.assign(this.props,props);
-    }
-    getData(obj:DataObj) { return }
-    getDisplayName() { return this.props.name; }
-    getDbType() :string { return null  }
-    copyFromDb (obj: object,row:object){
-        if(this.id in row)
-            obj[this.id]=row[this.id] }
-    copyToDb(obj: object,row:object) { row[this.id]=obj[this.id] }
-    abstract getDisplayString(obj: object,objEx:object) : string;
-    getDisplayElm(obj: object,objEx:object)
-    {
-        return null;
-    };
-    getIndex(obj: DataObj) :IndexIdInt { return null }
-    getSummary(obj: DataObj,summary:object){
-        if(this.props.summary)
-            summary[this.id]= obj[this.id];
-    };
-
-
-}
-@FF export class FieldId extends Field
-{
-    getDbType() { return `INTEGER PRIMARY KEY`}
-    getDisplayString(obj: object,objEx:object) { return  obj[this.id];}
-
-}
-
-
-export class FieldSet
-{
-    map =new Map<string, Field>();
+    map =new Map<string, FT>();
     constructor(o:IFieldSet=null) {
         if(o)
-        for(let i in o.set ) {
-            let iF=o.set[i];
-            let fldCon=fldFactory.get(iF.type);
-            if(!fldCon)
-            {
-                console.log("Bad field type:",iF.type);
-                continue;
+            for(let i in o.set ) {
+                let iF=o.set[i];
+                let fldCon=<FldConT<FT>>F.fldFactory.get(iF.type);
+                if(!fldCon)
+                {
+                    console.log("Bad field type:",iF.type);
+                    continue;
+                }
+                let fld=new (fldCon)(iF);
+                this.map.set(i,fld);
             }
-            let fld=new (fldCon)(iF);
-            this.map.set(i,fld);
-        }
 
     }
-    mergeSet(other:FieldSet)
+    mergeSet(other:FieldSetT<FT>)
     {
         other.map.forEach((f,k)=>this.set(k,f));
 
     }
-    set(id:string,fld:Field)
+    set(id:string,fld: FT)
     {
         this.map.set(id,fld);
     }
@@ -106,14 +48,15 @@ export class FieldSet
         return JSON.stringify(this.getAsObject());
     }
 }
+export type DOC = new () =>  DataObj;
 
+export class FieldSet extends FieldSetT<F.Field>
+{
 
-export type DOC = new () => typeof DataObj;
-
-
+}
 export class DataObjMeta
 {
-    con : DOC;
+    con :  DOC
     name="?";
     constructor(con : DOC) {
         this.con=con;
@@ -135,15 +78,15 @@ export class DataObjMeta
         return this.fsAll;
     }
 
-    addField(name:string,fld:Field) : Field
+    addField(name:string,fld:F.Field) : F.Field
     {
         this.fsUnique.set(name,fld);
         return fld;
     }
     createFieldSet(set: FieldSet){
-        // @ts-ignore
 
-        if(this.con!=DataObj)
+
+        if(this.con.name!="DataObj")
         {
             // @ts-ignore
             let base=this.con.__proto__;
@@ -156,7 +99,6 @@ export class DataObjMeta
 
     }
 }
-
 export function getMeta(con: DOC) :DataObjMeta
 {
     const metaKey="__meta_"+con.name;
@@ -164,17 +106,13 @@ export function getMeta(con: DOC) :DataObjMeta
     if(!m)
     {
         m=con[metaKey]=new DataObjMeta(con);
-        m.addField('id',new FieldId({id: 'id',name:'id' }));
+        m.addField('id',new F.FieldId({id: 'id',name:'id' }));
     }
     return m;
 }
-// member decorator.
-export function Fld<FIELD_T extends Field> (classobj: Object,id:string,type: (new (prop) => FIELD_T),opt:Partial<IField>={})
-{
-    let p=Object.assign({id: id,name:id },opt);
-    // @ts-ignore
-    let f=getMeta(classobj.constructor).addField(id,new type(p));
-}
+
+
+export type DoConT<T extends DataObj> = new () => T;
 
 export class  DataObj
 {
@@ -183,7 +121,7 @@ export class  DataObj
     {
         return this.id;
     }
-    get fields() :  FieldSet
+    get fields() : FieldSet
     {
         return this.meta.fields;
     }
@@ -222,14 +160,6 @@ export class  DataObj
         }
     }
 
-    getSummary() : object
-    {
-        let flds=this.meta.fields;
-        let summary={};
-        for (let f of flds)
-            f.getSummary(this,summary);
-        return summary;
-    }
     getSummaryString(flds:FieldSet=this.meta.fields) : string
     {
         let h="";
@@ -263,13 +193,7 @@ export class  DataObj
     }
     dumpFields()
     {
-       console.log(this.meta.fields);
+        console.log(this.meta.fields);
 
     }
 }
-export interface  IFieldIdx extends IField{
-    indexedType: typeof DataObj;
-}
-
-
-

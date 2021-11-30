@@ -1,6 +1,6 @@
 import * as ajax from "../Ajax.js"
 import {IField,IFieldSet} from "/zs_client/zb/IField.js";
-import {DataObj} from "/zs_client/zb/DataObj.js";
+import {DataObj} from "/zs_homonym/DataObj.js";
 
 export class SelectParams
 {
@@ -55,7 +55,7 @@ export class Record
     fields: IFieldSet={ set: {}};
 }
 
-export class ReqGetRecord extends ajax.Req(
+export class ReqRecord extends ajax.Req(
     class extends ReqDataParams
     {
         objId:number=-1;

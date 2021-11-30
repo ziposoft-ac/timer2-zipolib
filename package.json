@@ -8,6 +8,7 @@
     "/zs_client": "./public/mod",
     "@zs_client": "./public/mod",
     "@zs_server": "./server",
+    "/zs_homonym": "./server/homonym",
     "/node": "node_modules"
   },
   "scripts": {},

@@ -18,6 +18,7 @@
     {
       "/node/*" : ["./node_modules/*"],
       "/zs_client/*": ["./public/mod/*"],
+      "/zs_homonym/*": ["./server/homonym/*"],
       "@zs_client/*": ["./public/mod/*"],
       "@zs_server/*": ["./server/*"],
 

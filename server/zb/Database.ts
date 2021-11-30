@@ -1,9 +1,10 @@
 import  SQL from 'better-sqlite3';
 import {SelectParams, SelectResult} from "/zs_client/zb/DataViewReq.js";
+import {DataObj} from "/zs_homonym/DataObj";
 
-import {DataObj, DataObjMeta, DoConT, getMeta, FieldSet, } from "/zs_client/zb/DataObj"
 import path from "path";
 import * as FD from "/zs_client/zb/Decor"
+import {FieldSet,getMeta,DataObjMeta,DoConT} from "/zs_client/zb/Meta"
 import * as fs from 'fs'
 
 
@@ -46,13 +47,12 @@ class SqlTrans
     stm : SQL.Statement = null;
     trans =null;
     sql : string;
-    exec(commit: boolean,obj  : DataObj,zb: ZipoBase, getsql : ()=> string ) :  SQL.RunResult
+    exec(commit: boolean,row:  object,zb: ZipoBase, getsql : ()=> string ) :  SQL.RunResult
     {
-        if(!obj)
+        if(!row)
         {
-            throw new Error("SqlTrans obj is null");
+            throw new Error("SqlTrans row is null");
         }
-        let row=obj.copyToDbRow();
         let result: SQL.RunResult={changes:0, lastInsertRowid:0};
 
         if(!this.trans)
@@ -151,6 +151,15 @@ export abstract class TableBase
     select_by_id  =new SqlSelect();
     select_by_rowid  =null;
     private select_arr : Record<string, SqlSelect >={};
+
+    protected trans_arr : Record<string, SqlTrans >={};
+    protected getTrans(name:string)
+    {
+        if(!(name in this.trans_arr))
+            this.trans_arr[name]=new SqlTrans();
+        return this.trans_arr[name];
+    }
+
     protected getSelect(name) : SqlSelect
     {
         if(!(name in this.select_arr))
@@ -209,10 +218,18 @@ export abstract class TableBase
             return;
         }
         this.execSql(`CREATE TABLE IF NOT EXISTS ${this.name} (${cols})`);
-
-
-
     };
+
+    trans_delete  =new SqlTrans();
+    deleteRow(id:number,commit=true)
+    {
+        return this.trans_delete.exec(commit, {id:id},this.zb,()=>{
+            let sql=`DELETE FROM ${this.name} WHERE id = @id`;
+            return sql;
+        });
+    };
+
+
 
     getRowByTxtId(id:string)
     {
@@ -553,17 +570,13 @@ export class Table<T extends DataObj> extends TableBase
         return this.rowsToObjs(this.getRowsByQueryName(queryName,cond));
     }
 
-    private trans_arr : Record<string, SqlTrans >={};
-    private getTrans(name:string)
-    {
-        if(!(name in this.trans_arr))
-            this.trans_arr[name]=new SqlTrans();
-        return this.trans_arr[name];
-    }
+
 
     replaceById(obj : T,commit:boolean=true)
     {
-        return this.getTrans('replace_id').exec(commit,obj,this.zb,()=>{
+        let row=obj.copyToDbRow();
+
+        return this.getTrans('replace_id').exec(commit,row,this.zb,()=>{
             let cols="";
             let vals="";
             for(const f of this.fields)
@@ -584,7 +597,9 @@ export class Table<T extends DataObj> extends TableBase
     trans_insert  =new SqlTrans();
     insert(obj : T,commit:boolean=true)
     {
-        return this.trans_insert.exec(commit,obj,this.zb,()=>{
+        let row=obj.copyToDbRow();
+
+        return this.trans_insert.exec(commit,row,this.zb,()=>{
             let cols="";
             let vals="";
             for(const f of this.fields)
@@ -611,7 +626,9 @@ export class Table<T extends DataObj> extends TableBase
     {
         //TODO - this is bad. The obj:T must be a class instance, cant be a partial
         let trans=this.getTrans('update_by'+key_id);
-        return trans.exec(commit,obj,this.zb,()=>{
+        let row=obj.copyToDbRow();
+
+        return trans.exec(commit,row,this.zb,()=>{
             let st="";
             for(const f of this.fields)
             {

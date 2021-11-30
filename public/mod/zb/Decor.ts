@@ -1,35 +1,19 @@
-import {IField,IFieldSet} from "/zs_client/zb/IField.js";
-import {DataObj, getMeta,Field,IFieldIdx,Fld} from "/zs_client/zb/DataObj.js";
-import * as Util from "/zs_client/Util.js";
+import {IField} from "/zs_client/zb/IField.js";
+import {getMeta} from "/zs_client/zb/Meta.js";
+import * as F from "/zs_homonym/Fields.js"
 
-interface FieldCon {
-    new (props:IField ): Field;
-}
-interface FieldConIndex {
-    new (props:IFieldIdx ): Field;
-}
-interface FieldModule {
-    FieldText : FieldCon;
-    FieldInt : FieldCon;
-    FieldKeyText : FieldCon;
-    FieldAutoKey : FieldCon;
-    FieldBool : FieldCon;
-    FieldDateTime : FieldCon;
-    FieldKeyInt : FieldCon;
-    FieldTextFunc : FieldCon;
-    FieldFloat : FieldCon;
-    FieldImg : FieldCon;
-    FieldIndexInt : FieldConIndex;
-    FieldJson : FieldCon;
-
+// member decorator.
+export function Fld<FIELD_T extends F.Field> (classobj: Object,id:string,type: (new (prop) => FIELD_T),opt:Partial<IField>={})
+{
+    let p=Object.assign({id: id,name:id },opt);
+    // @ts-ignore
+    let f=getMeta(classobj.constructor).addField(id,new type(p));
 }
 
 
 
-let F: FieldModule=await Util.importClientServer('zb/Fields.js');
 
-
-type DecFunc= (classType,memberName)=>void;
+export type DecFunc= (classType,memberName)=>void;
 
 
 
@@ -43,7 +27,7 @@ export function AutoKey(c,p) { Fld(c,p,F.FieldAutoKey) }
 export function Bool(c,p) { Fld(c,p,F.FieldBool) }
 export function DateTime(c,p) { Fld(c,p,F.FieldDateTime) }
 
-export function FieldT<FIELD_T extends Field>(type: (new (prop) => FIELD_T), props:Partial<IField> ) : DecFunc
+export function FieldT<FIELD_T extends F.Field>(type: (new (prop) => FIELD_T), props:Partial<IField> ) : DecFunc
 {
     return (c,p)=> Fld(c,p,type,props);
 }
@@ -68,14 +52,3 @@ export function ElmFunc( props:Partial<IField> ) : DecFunc
     return (c,p)=> Fld(c,p,F.FieldTextFunc,props);
 }
 
-export function IndexInt( classRef : typeof DataObj ,opt:Partial<IFieldIdx> ={}  ) : DecFunc
-{
-
-    return (c,id)=>
-    {
-        opt.indexedType=classRef;
-        Fld(c,id,F.FieldIndexInt,opt);
-
-        //getMeta(c.constructor).addField(id,new F.FieldIndexInt(p));
-    }
-}

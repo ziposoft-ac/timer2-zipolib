@@ -1,5 +1,6 @@
 import * as $ from "/zs_client/Dom.js";
-import * as D from "/zs_client/zb/DataObj.js";
+import * as M from "/zs_client/zb/Meta.js";
+import * as D from "/zs_homonym/DataObj.js";
 import {SelectResult} from "/zs_client/zb/DataViewReq";
 function addChildEventListener(base, eventName, selector, handler) {
     base.addEventListener(eventName, function(event) {
@@ -58,7 +59,7 @@ export class DvTable {
     }
     show(sel:SelectResult  )
     {
-        let flds=new D.FieldSet(sel.fields);
+        let flds=new M.FieldSet(sel.fields);
         this.sel=sel;
 
 

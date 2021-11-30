@@ -5,7 +5,7 @@ import {ReqT} from "/zs_client/Ajax";
 import * as ZB from "./Database";
 import {Router} from "@zs_server/Router";
 import * as Fastify from "/node/fastify";
-import {ReqGetRecord} from "/zs_client/zb/DataViewReq";
+import {ReqRecord} from "/zs_client/zb/DataViewReq";
 
 
 // Init shared
@@ -78,8 +78,16 @@ registerSR(
         }
 
     },
-    class  extends dataSR(DV.ReqGetRecord)
-    {   //Get refresh token from home
+    class  extends dataSR(DV.ReqRecord)
+    {
+        async delete()
+        {
+            let res=this.table.deleteRow(this.params.objId,true);
+            console.log("delete:",res);
+            return true;
+
+
+        }
         async exec()
         {
             let obj=this.table.getObjById(this.params.objId);

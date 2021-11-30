@@ -34,6 +34,14 @@
 {
     width: max-content;
     white-space:nowrap;
+    padding: 3px;
 
-
+}
+.dvTable tr:hover
+{
+    background-color: yellow;
+}
+.dvTable tr:nth-child(3n)
+{
+    background-color: #eee;
 }

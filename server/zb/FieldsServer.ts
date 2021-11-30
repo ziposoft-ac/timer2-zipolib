@@ -1,45 +1,32 @@
-/*
-    CLIENT FIELDS
+import {IField} from "/zs_client/zb/IField.js";
 
-*/
-
-import {IField,IFieldSet} from "/zs_client/zb/IField.js";
-
-import {DataObj, Field,  IFieldIdx,FF} from "/zs_client/zb/DataObj.js";
 import * as Time from "/zs_client/Time.js"
-import * as $ from "/zs_client/Dom.js";
+import {FieldBase} from "/zs_client/zb/FieldBase";
 
 
-class FieldClient extends Field
+export class FieldServer extends FieldBase
 {
+
+
     getDisplayString(obj: object,objEx:object) : string
     {
         return obj[this.id];
     }
 
-    getDisplayElm(obj: object,objEx:object) : HTMLElement
-    {
-        let elm=$.create('div');
-        elm.innerText=this.getDisplayString(obj,objEx);
-        return elm;
-
-    };
 
 }
-@FF export class FieldImg extends FieldClient
-{
-    getDisplayElm(obj: object,objEx:object) : HTMLElement
-    {
-        let elm=$.create('img');
-        elm.src=obj[this.id];
-        return elm;
+export type FldCon = new (iF:IField) =>  FieldServer;
+export var fldFactory=new Map<string,FldCon>();
+export function FF (constructor) {
+    //console.log("FEILD TYPE:",constructor.name);
+    fldFactory.set(constructor.name,constructor);
+    //Util.gObjFactory.addClass(constructor);
 
-    };
 }
 
 
 
-@FF export  class FieldJson extends FieldClient
+@FF export  class FieldJson extends FieldServer
 {
     constructor(props:IField ) {    super(props);   }
     getDbType() { return "TEXT"}
@@ -62,7 +49,7 @@ class FieldClient extends Field
     {
         row[this.id]=JSON.stringify(obj[this.id]);
     }
-    getDisplayString(obj: object,objEx:object) : string
+    getDisplayString(obj: object) : string
     {
         let val= obj[this.id];
         if(val)
@@ -71,7 +58,7 @@ class FieldClient extends Field
             return "JSON";
     }
 }
-@FF  export class FieldTextFunc extends FieldClient
+@FF  export class FieldTextFunc extends FieldServer
 {
     constructor(props:IField )
     {
@@ -88,19 +75,25 @@ class FieldClient extends Field
         return obj[this.id]();
     }
 }
-@FF  export class FieldText extends FieldClient
+@FF  export class FieldText extends FieldServer
 {
     constructor(props:IField ) {    super(props);   }
+    getDbType() { return "TEXT"}
 
     getDisplayString(obj: object) : string
     {
         return obj[this.id];
     }
 }
-
-
-@FF export class FieldFloat extends FieldClient
+@FF export class FieldImg extends FieldText
 {
+}
+
+
+@FF export class FieldFloat extends FieldServer
+{
+    getDbType() { return `REAL`}
+    //setDefault(obj) {   obj[this.name]=0;  }
     getDisplayString(obj: object,objEx:object) : string
     {
         let f : number =<number> obj[this.id];
@@ -108,12 +101,18 @@ class FieldClient extends Field
     }
 }
 
-@FF export class FieldInt extends FieldClient
+@FF export class FieldInt extends FieldServer
 {
+    getDbType() { return `INTEGER`}
     getDisplayString(obj: object,objEx:object) : string
     {
         return  obj[this.id];
     }
+}
+@FF export class FieldId extends FieldInt
+{
+    getDbType() { return `INTEGER PRIMARY KEY`}
+
 }
 
 @FF  export class FieldIpAddress extends FieldInt
@@ -138,63 +137,30 @@ class FieldClient extends Field
 }
 @FF export class FieldDateTime extends FieldInt
 {
+    getDisplayType() { return `DATETIME`}
     getDisplayString(obj: object,objEx:object) : string
     {
-        let val=obj[this.id];
-        if(!val)
-            return "-";
         return  Time.getReadableDateTimeFromMs(obj[this.id]);
     }
 }
 
 
-@FF export class FieldIndexInt extends FieldInt
-{
-    indexedType: typeof DataObj;
-    // refTable : string;
-    getDisplayType() { return `INDEX`}
 
-
-    getDisplayString(obj: object,objEx:object)
-    {
-        let key=obj[this.id];
-        if(objEx)
-        {
-            let d=<DataObj>objEx[this.id];
-            if(d instanceof DataObj)
-                return d.getSummaryString();
-
-
-        }
-        return key;
-
-
-
-    }
-    constructor( props : IFieldIdx) {
-        super(props);
-        this.indexedType=props.indexedType;
-
-    }
-}
 @FF export class FieldAutoKey extends FieldInt
 {
-    //getDisplayString(obj: object,objEx:object) { return "";}
+    getDbType() { return `INTEGER  KEY AUTOINCREMENT`}
+    getDisplayString(obj: object,objEx:object) { return "";}
 
 }
 @FF export class FieldKeyInt extends FieldInt
 {
-    getDisplayString(obj: object,objEx:object)
-    {
-        let key=obj[this.id];
-            return key;
-
-
-    }
+    getDbType() { return `INTEGER  KEY`}
+    getDisplayString(obj: object,objEx:object) { return "";}
 
 }
 @FF export class FieldKeyText extends FieldText
 {
+    getDbType() { return `TEXT  KEY`}
 
 }
 
