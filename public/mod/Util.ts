@@ -42,14 +42,14 @@ export class Semaphore
 
     waiting =new Set<SemWait>();
 
-    async waitOn(timeout:number) : Promise<any> {
+    async waitOn(timeout_ms:number) : Promise<any> {
         return new Promise(resolve =>
         {
             let semWait={timer:null,resolve};
             semWait.timer=setTimeout(()=>{
                 this.waiting.delete(semWait);
                 resolve(null);
-            },timeout);
+            },timeout_ms);
             this.waiting.add(semWait);
         });
     }

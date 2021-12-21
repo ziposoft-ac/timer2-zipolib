@@ -42,7 +42,7 @@ zs-menu,zs-menuitem
     cursor: pointer;
     display: block;
     border-right: 1px solid white;
-    /* z-index: 99999; */
+     z-index: 99999;
 }
 /*
 zs-menu > div::-webkit-scrollbar {

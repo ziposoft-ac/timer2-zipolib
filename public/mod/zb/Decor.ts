@@ -27,8 +27,9 @@ export function AutoKey(c,p) { Fld(c,p,F.FieldAutoKey) }
 export function Bool(c,p) { Fld(c,p,F.FieldBool) }
 export function DateTime(c,p) { Fld(c,p,F.FieldDateTime) }
 
-export function FieldT<FIELD_T extends F.Field>(type: (new (prop) => FIELD_T), props:Partial<IField> ) : DecFunc
+export function FT<FIELD_T extends F.Field>(type: (new (prop) => FIELD_T), props:Partial<IField> ) : DecFunc
 {
+
     return (c,p)=> Fld(c,p,type,props);
 }
 export function Float( props:Partial<IField> ) : DecFunc
@@ -52,3 +53,4 @@ export function ElmFunc( props:Partial<IField> ) : DecFunc
     return (c,p)=> Fld(c,p,F.FieldTextFunc,props);
 }
 
+export *  from "/zs_homonym/Fields.js"

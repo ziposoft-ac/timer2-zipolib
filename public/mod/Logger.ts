@@ -74,8 +74,8 @@ export class Logger
         let e=new Error();
         let s=e.stack;
 
-        let line=s.split('\n')[2+depth];
-        this.log(line);
+        let lines=s.split('\n');
+        this.log(lines[3+depth]);
         /*
         console.log(line);
         let func=null;

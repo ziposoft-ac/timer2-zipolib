@@ -85,6 +85,19 @@ export function FF (constructor) {
         return obj[this.id];
     }
 }
+@FF  export class FieldPolyline extends FieldText
+{
+    constructor(props:IField ) {
+
+        super(props);   }
+
+    getDisplayString(obj: object) : string
+    {
+
+        return "polyline";
+    }
+}
+
 @FF export class FieldImg extends FieldText
 {
 }

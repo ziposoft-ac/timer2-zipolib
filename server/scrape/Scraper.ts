@@ -6,7 +6,7 @@ import {CookieJar} from "tough-cookie"
 import { FileCookieStore} from "tough-cookie-file-store"
 import {mkdirSync} from "fs";
 
-const pempath = zs.path("server/scrape/cacert.pem");
+const pempath = zs.path("zipolib/server/scrape/cacert.pem");
 export interface GotResult
 {
     response: Response<string>;

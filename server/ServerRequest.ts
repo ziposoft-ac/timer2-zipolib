@@ -16,12 +16,12 @@ export class ServerRequest
     };
     trace()
     {
-        this.logger.traceLine(1);
+        this.logger.traceLine(0);
     }
     setError(...args) : boolean
     {
         this.logger.log(...args);
-        this.logger.traceLine(1);
+        this.logger.traceLine(0);
         this.out.error_msg=args.join();
         this.out.success=false;
         return false;

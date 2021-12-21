@@ -113,7 +113,11 @@ export function timeStrToSec(timeStr : string) :number{
     return secs;
 }
 
+export function convertUTCDateToLocalDate(date) {
 
+    var newDate = new Date(date.getTime()-date.getTimezoneOffset()*60*1000);
+    return newDate;
+}
 export function formatTimestamp_ms(ts:number,show_ms=true,local=false) : string
 {
 

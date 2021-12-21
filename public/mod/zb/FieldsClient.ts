@@ -126,6 +126,16 @@ export function FF (constructor) {
         return elm;
     };
 }
+@FF  export class FieldPolyline extends FieldText
+{
+    constructor(props:IField ) {
+        super(props);   }
+
+    getDisplayString(obj: object) : string
+    {
+        return "polyline";
+    }
+}
 
 
 @FF export class FieldFloat extends FieldClient

@@ -30,7 +30,7 @@ export async function jsonFileRead<T>(filename:string) : Promise<T>
             obj=JSON.parse(buff.toString());
     }
     catch (e) {
-        console.log("jsonFileRead FAILED:",filename,e);
+        //console.log("jsonFileRead FAILED:",filename,e);
         return null;
     }
     return obj;
