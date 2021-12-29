@@ -5,7 +5,7 @@ import Cookies from "./js.cookie.js";
 import {PageClientMenu, PageClientMenuT} from "./ClientPage.js"
 console.log("MenuClient module");
 
-const DEBUG=false;
+const DEBUG=true;
 function DBG(...args: any[]) { if(DEBUG) console.log(...args);};
 
 
@@ -50,7 +50,10 @@ abstract class MenuBase
             this.props.getLabel();
         }
     }
-    onClick(ev:MouseEvent) {     }
+    onClick(ev:MouseEvent) {
+        DBG("MenuBase onClick:"+this.constructor.name)
+
+    }
     onMouseEnter(ev:MouseEvent)  { }
     onMouseLeave(ev:MouseEvent) {  }
     contract() {}
@@ -352,6 +355,8 @@ export class MenuInput extends MenuItem
     {
     }
     onClick(ev: MouseEvent) {
+            DBG("MenuInput onClick:"+this.constructor.name)
+
        ev.stopPropagation();
     }
 
