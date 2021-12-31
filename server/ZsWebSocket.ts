@@ -29,7 +29,7 @@ export class ZsWebSocket {
         this.retry = true;
 
         this.on_connect_retry();
-        console.log("trying to connect...");
+        console.log("trying to connect: ", this.url);
         this.set_state(State.trying);
 
         return this.reconnect();
