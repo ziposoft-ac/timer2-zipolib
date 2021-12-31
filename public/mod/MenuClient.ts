@@ -5,7 +5,7 @@ import Cookies from "./js.cookie.js";
 import {PageClientMenu, PageClientMenuT} from "./ClientPage.js"
 console.log("MenuClient module");
 
-const DEBUG=true;
+const DEBUG=false;
 function DBG(...args: any[]) { if(DEBUG) console.log(...args);};
 
 
