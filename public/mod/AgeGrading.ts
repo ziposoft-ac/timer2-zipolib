@@ -21,6 +21,7 @@ export enum Gender {
     F="F"
 };
 export enum Units {
+    m="m",
     km="km",
     miles="miles"
 };
@@ -42,6 +43,12 @@ export var AgeGrading= {
             return 0;
         if (!age)
             return 0;
+        if(units==Units.m)
+        {
+            //TODO support meters properly
+            units=Units.km;
+            distance=distance/1000;
+        }
         let wrSec = this.getWrSeconds(gender, age, distance, units);
         if (!wrSec)
             return 0;
