@@ -16,7 +16,8 @@ export class ZDataTable
         autoWidth:false,
         lengthMenu: [[25, 50, 75, -1], [25, 50, 75, "All"]],
         columns: [            ],
-        data : null,
+        data : null
+
         //order: [[0,"desc"]],
 
     };
@@ -43,6 +44,9 @@ export class ZDataTable
             }
         }
         this.rowContext= new Map();
+
+
+
         this.createTable();
     }
 

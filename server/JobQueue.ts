@@ -65,9 +65,10 @@ export class JobQueue<JobParams>
 
             this.parentCallback.call(this.parent,id,jobParams,()=>
             {
-                console.log(`QUE ${this.name} done#`,id);
                 this.outstanding_jobs--;
                 this.start_process();
+                console.log(`QUE ${this.name} done#`,id,this.outstanding_jobs,"left");
+
 
             });
         }

@@ -1,6 +1,6 @@
 import got, {Response} from "got";
 import fs, {NoParamCallback} from "fs";
-
+import * as FU from '../FileUtil'
 /**
  * Download and save an image file from a url. Called async
  * @param url - full url to web
@@ -8,7 +8,7 @@ import fs, {NoParamCallback} from "fs";
  * @param baseFileName - base filename without ext.
  * @param callback - returns the filename with .jpg or .png ext, or error
  */
-export async function downloadImg(url:string,path:string,baseFileName:string,callback: (filename,error)=>void)
+export async function downloadImg(url:string,path:string,baseFileName:string,overwrite:boolean,callback: (filename,error)=>void)
 {
     let response: Response<string>=null;
     let error: any=null;
@@ -23,9 +23,13 @@ export async function downloadImg(url:string,path:string,baseFileName:string,cal
         if(response.body.substr(1,3)=="PNG")
             ext="png";
         let filename=baseFileName+"."+ext;
-        fs.writeFile(path+"/"+filename,
-            response.rawBody,
-            { encoding:"binary"},(err)=> callback(filename,err)  );
+        let fullpath=path+"/"+filename;
+        if((overwrite)||(FU.fileExists(fullpath)))
+        {
+            fs.writeFile(path + "/" + filename,
+                response.rawBody,
+                {encoding: "binary"}, (err) => callback(filename, err));
+        }
 
     }
     catch (error) {
