@@ -1,7 +1,7 @@
 
 
 
-enum LogLevel{
+export enum LogLevel{
     error,
     warn,
     info,
@@ -59,7 +59,7 @@ export class Logger
         }
     }
     echo_console=true;
-    level=2;
+    level:LogLevel=LogLevel.info;
     stack()
     {
         let e=new Error();
