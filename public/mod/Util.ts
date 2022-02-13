@@ -292,3 +292,9 @@ export function celciusToF(c:number)
     return Math.round(c*90/5+320)/10;
 
 }
+export function stringToFileName(input:string)
+{
+    let fixed = input.replace(/[^a-zA-Z0-9]/g, '_');
+    return fixed;
+
+}

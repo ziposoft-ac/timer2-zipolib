@@ -53,7 +53,12 @@ export async function loadCsvFile(fullpath:string,rowCallback: (data:string[])=>
             })
             .on('end',()=> {
                 resolveFunc(true);
-            });
+            }).on('error',(err:Error)=>{
+                console.log("loadCsvFile",err.message);
+                resolveFunc(false);
+
+            }
+    )
     };
     return  new Promise(run);
 }
@@ -66,7 +71,7 @@ export async function loadCsvFileAll(fullpath:string) : Promise<string[][]>
         });
     }
     catch (e) {
-
+        console.log("error loading CSV file:",e.error)
     }
 
 
