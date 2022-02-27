@@ -19,6 +19,7 @@ export function value(elementID:string) : string
 export function input(elementID:string) : HTMLInputElement
 {
     let i= document.getElementById(elementID);
+    if(i)
     if('value' in i) return <HTMLInputElement>i;
     console.log(`Error. ${elementID} is not an input element`);
     return null;
