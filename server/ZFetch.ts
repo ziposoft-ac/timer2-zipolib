@@ -10,12 +10,12 @@ if (typeof(fetch) === 'undefined') {
 
 
  */
-import fetch from 'node-fetch';
+import * as F from 'node-fetch';
 
 
 export interface FetchResult<T> {
     data: T;
-    response: Response;
+    response: F.Response;
     success: boolean;
     error_msg: string;
     stack: string;
@@ -34,7 +34,7 @@ export async function zfetch(path: string,
                                 params ?: Record<any, any>,
                                 options?: Partial<FetchOptions>): Promise<FetchResult<string>> {
 
-    let res: Response;
+    let res: F.Response;
     let opt: FetchOptions =
         {
             method: "GET",
@@ -69,7 +69,7 @@ export async function zfetch(path: string,
             path = url.toString();
         }
 
-        res = await fetch(path, init);
+        res = await F.default(path, init);
         if (res.ok) {
 
             if (res.status == 200)
@@ -79,9 +79,7 @@ export async function zfetch(path: string,
                     case format.text:
                         ret.data = await res.text();
                         break;
-                    case format.json:
-                        ret.data = await res.json();
-                        break;
+
                     case format.binary:
                         break;
 
@@ -124,7 +122,7 @@ export async function objfetch<T>(path: string,
                                 params ?: Record<any, any>,
                                 options?: Partial<FetchOptions>): Promise<FetchResult<T>> {
 
-    let res: Response;
+    let res: F.Response;
     let opt: FetchOptions =
         {
             method: "GET",
@@ -159,7 +157,7 @@ export async function objfetch<T>(path: string,
             path = url.toString();
         }
 
-        res = await fetch(path, init);
+        res = await F.default(path, init);
         if (res.ok) {
             if (res.status == 200)
             {
@@ -168,7 +166,7 @@ export async function objfetch<T>(path: string,
                     case format.text:
                         break;
                     case format.json:
-                        ret.data = await res.json();
+                        ret.data =<T> await res.json();
                         break;
                     case format.binary:
                         break;
