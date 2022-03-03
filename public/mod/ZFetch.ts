@@ -10,10 +10,15 @@ export interface FetchResult<T> {
     error_msg: string;
     stack: string;
 }
-
+enum format{
+    json,
+    text,
+    binary
+}
 export interface FetchOptions {
     method?: string;
     bigInt?: boolean;
+    format?:format;
 }
 
 export async function zfetch<T>(path: string,
@@ -24,7 +29,8 @@ export async function zfetch<T>(path: string,
     let opt: FetchOptions =
         {
             method: "GET",
-            bigInt: false
+            bigInt: false,
+            format:format.json
         }
     let ret: FetchResult<T> = {
         data: null,
@@ -71,10 +77,10 @@ export async function zfetch<T>(path: string,
     }
     if (res) {
         ret.response = res;
-        console.log("Strava API:", res.status, res.statusText, res.url);
+        console.log("fetch:", res.status, res.statusText, res.url);
 
         if (!res.ok) {
-            console.log("Strava API:", res.status, res.statusText, res.url);
+            console.log("fetch:", res.status, res.statusText, res.url);
             ret.error_msg = res.statusText;
         }
 
