@@ -27,12 +27,12 @@ export class ClientRequestT<PARAMS,DATA>
         this.path=path;
     }
 
-    async exec(params:Partial<PARAMS>=null,debug=false) : Promise<AjaxResponseT<DATA>>
+    async exec(params:Partial<PARAMS>=null,debug=false,fetchFunc=null) : Promise<AjaxResponseT<DATA>>
     {
         if(params)
             Object.assign(this.in.params,params);
 
-        return await this.fetchPost(debug);
+        return await this.fetchPost(debug,fetchFunc);
     }
     async action(act:string,params:Partial<PARAMS>=null) : Promise<AjaxResponseT<DATA>>
     {
@@ -73,15 +73,16 @@ export class ClientRequestT<PARAMS,DATA>
         console.log("Aborting request:",this.requestId);
         this.abortController.abort();
     }
-    async fetchPost(debug=false) : Promise<AjaxResponseT<DATA>>
+    async fetchPost(debug=false,fetchFunc=null) : Promise<AjaxResponseT<DATA>>
     {
         let res : Response=null;
-
+        if(!fetchFunc)
+            fetchFunc=globalThis.fetch;
 
         this.in.requestId=this.requestId;
         try
         {
-            res = await globalThis.fetch(this.path,{
+            res = await fetchFunc(this.path,{
                 signal:this.abortController.signal,
                 method: 'post',
                 body:  JSON.stringify(this.in),
