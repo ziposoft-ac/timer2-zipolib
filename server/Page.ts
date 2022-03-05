@@ -43,6 +43,7 @@ export class PageServer {
     };
     title: string = "ZipoSoft";
     description: string = null;
+    og_image="";
     scripts: string[] = [];
     css: string[] = ["/zs_public/css/common.css"];
     modules: string[] = [];
@@ -80,9 +81,14 @@ export class PageServer {
         //<script data-main="/app/main" src="/lib/require.js"></script>
         return `<html>
         <head><title>${this.title}</title>
+            <link rel="icon" href="/img/favicon.ico">
+             <meta property='og:image' content="${this.og_image}"/>
+             <meta property='og:title' content="${this.title}"/>
+            <meta name="description"  content="${this.description}" />
+
             <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
             <meta name="author" content="ZipoSoft, Inc."/>
-            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
         ${ss}
         </head>
         <body>`;
