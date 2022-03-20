@@ -1,5 +1,6 @@
 
 import * as Time from "./Time.js"
+import {Data} from "ws";
 class RowContext
 {
     show_child=false;
@@ -10,6 +11,7 @@ export class ZDataTable
     table_id : string;
     rowContext: Map<any, RowContext> =null;
     numRows=0;
+
     options_dt : DataTables.Settings={
         dom: 't',
         pageLength: -1,

@@ -21,9 +21,9 @@ export enum Gender {
     F="F"
 };
 export enum Units {
-    m="m",
-    km="km",
-    miles="miles"
+    miles="miles",
+    meters="m",
+    km="km"
 };
 export var AgeGrading= {
     // returns 0 on error
@@ -43,7 +43,7 @@ export var AgeGrading= {
             return 0;
         if (!age)
             return 0;
-        if(units==Units.m)
+        if(units==Units.meters)
         {
             //TODO support meters properly
             units=Units.km;
