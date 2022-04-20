@@ -1,5 +1,5 @@
 import {AjaxParams, AjaxParamsT, AjaxRequest, AjaxResponse,AjaxRequestBase, AjaxResponseT, ReqT} from "/zs_client/Ajax";
-import {Logger} from "/zs_client/Logger";
+import {Logger, LoggerArray} from "/zs_client/Logger";
 
 
 export class ServerRequest
@@ -9,7 +9,7 @@ export class ServerRequest
     out:AjaxResponse;
     req: AjaxRequestBase;
 
-    logger=new Logger();
+    logger=new LoggerArray();
 
     log(...args: any[]) {
         this.logger.log(...args);

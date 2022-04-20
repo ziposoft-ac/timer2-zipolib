@@ -1,6 +1,5 @@
 
 
-
 export enum LogLevel{
     error,
     warn,
@@ -12,18 +11,34 @@ export enum LogLevel{
 
 export class Logger
 {
-    lines : string[]=[];
+    timestampShow=false;
+    getMs():string
+    {
+        let t=process.hrtime(this.timestampOffset);
+        let ms= t[0]*1000+t[1]/1000000;
+        return ms.toString();
+    }
+    setTimestamp(set:boolean)
+    {
+        this.timestampShow=set;
+        this.timestampOffset=process.hrtime();
+    }
+    timestampOffset=process.hrtime();
     log(...args: any[]) {
-        let str=args.join();
-        this.lines.push(str);
+
+        let str="";
+        if(this.timestampShow)
+            str+=this.getMs()+":";
+        str+=args.join();
         this.logString(str);
         if(this.echo_console)
-            console.log(...args);
+            console.log(str);
+
     };
 
     logString(line:string)
     {
-
+        console.log(line);
     }
     error(...args: any[]) { this.log(args); }
     warn(...args: any[]) { if(this.level>=LogLevel.warn) this.log(...args); }
@@ -32,10 +47,7 @@ export class Logger
     debug(...args: any[]) { if(this.level>=LogLevel.debug) this.log(...args); }
 
 
-    getAllAsString() : string
-    {
-        return this.lines.join();
-    }
+
     agent="unknown";
     constructor() {
         if(globalThis.process)
@@ -93,7 +105,19 @@ export class Logger
 
 
 }
+export class LoggerArray extends Logger
+{
+    lines : string[]=[];
+    getAllAsString() : string
+    {
+        return this.lines.join();
+    }
+    override logString(line:string)
+    {
+        this.lines.push(line);
 
+    }
+}
 
 
 
