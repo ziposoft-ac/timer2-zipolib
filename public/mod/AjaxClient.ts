@@ -102,50 +102,58 @@ export class ClientRequestT<PARAMS,DATA>
                 this.out.error_msg=res.statusText;
                 this.onError(res.statusText);
             }
-
-            throw(ex);
-        }
-        if (!res.ok)
-        {
-            console.dir(res.headers);
-            console.log(res.status);
-            this.out.error_msg=res.statusText;
-            this.onError(res.statusText);
-        }
-        if(res.ok)
-        {
-            if(this.req.createObjs)
-            {
-                let recv= await res.text();
-                if(debug)
-                    console.log(recv);
-                // @ts-ignore
-                this.req.out=Util.gObjFactory.load(recv);
-            }
             else
             {
-
-                let recv= await res.json();
-                Object.assign(this.out,recv);
+                console.dir(ex);
 
             }
-            let defData=this.out.data;
-
-            this.dumpLog();
-            console.log("REQ",this.requestId+":"+this.in.action,"took:"+this.out.time_total_request);
-            if(this.out.success)
-            {
-                this.req.clientPostRx();
-                this.onData(this.out.data);
-            }
-            else
-            {
-                this.out.data=defData;//preserve default data
-
-                this.onError(this.out.error_msg);
-            }
-
+            //throw();
         }
+        if(res)
+        {
+            if (!res.ok)
+            {
+                console.dir(res.headers);
+                console.log(res.status);
+                this.out.error_msg=res.statusText;
+                this.onError(res.statusText);
+            }
+            if(res.ok)
+            {
+                if(this.req.createObjs)
+                {
+                    let recv= await res.text();
+                    if(debug)
+                        console.log(recv);
+                    // @ts-ignore
+                    this.req.out=Util.gObjFactory.load(recv);
+                }
+                else
+                {
+
+                    let recv= await res.json();
+                    Object.assign(this.out,recv);
+
+                }
+                let defData=this.out.data;
+
+                this.dumpLog();
+                console.log("REQ",this.requestId+":"+this.in.action,"took:"+this.out.time_total_request);
+                if(this.out.success)
+                {
+                    this.req.clientPostRx();
+                    this.onData(this.out.data);
+                }
+                else
+                {
+                    this.out.data=defData;//preserve default data
+
+                    this.onError(this.out.error_msg);
+                }
+
+            }
+        }
+
         return <AjaxResponseT<DATA>>this.out;
     }
 }
