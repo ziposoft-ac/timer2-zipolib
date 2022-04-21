@@ -163,7 +163,7 @@ export class PageServer {
         if (this.props.main) {
             return this.props.main;
         }
-        return `defalt body`;
+        return '';
     }
 
     fullpage(): string {
