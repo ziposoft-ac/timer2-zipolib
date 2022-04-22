@@ -28,7 +28,7 @@ export interface IBase
     getValue? : ()=> any;
     setValue? : (any)=> void;
     onValueChange? : (any)=> void;
-
+    items?: IBase[];
     access?: AccessLevel;
 
 }
@@ -68,7 +68,7 @@ export interface IPageFunc extends IBase {
     func : any;
 }
 export interface IMenu extends IBase {
-    items?: IBase[];
+
     dataSetKey?(key:string,val:any);
     dataGetKey?(key:string):any;
 }

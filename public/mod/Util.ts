@@ -6,7 +6,9 @@
  * Written by Anthony Corriveau <ac@ZipoSoft.com>  2018
  */
 
-
+export function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
 export async function importClientServer(path:string)
 {
     let mod;

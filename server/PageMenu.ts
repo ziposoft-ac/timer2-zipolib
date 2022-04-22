@@ -13,6 +13,7 @@ export class PageMenu extends PageServer
     constructor(props: PageProps) {
         super(props);
         this.modules = ["/zs_client/MenuClient"];
+
         this.staticData.menubar=this.menubar;
         props.req.cookies['']
         this.page_module="/zs_client/ClientPage";
