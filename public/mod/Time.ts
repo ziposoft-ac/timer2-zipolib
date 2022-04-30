@@ -76,7 +76,7 @@ export function getAgeFromBday(fromday:Date,day, month, year) {
     return age;
 }
 
-export function formatDateAsTime(date,show_ms=true,local=false):string
+export function formatDateAsTime(date,show_ms=true,local=false,show_zero_hours=false):string
 {
 
     let hours = (local ? date.getHours() : date.getUTCHours());
@@ -86,7 +86,7 @@ export function formatDateAsTime(date,show_ms=true,local=false):string
     let formattedTime =  minutes.substr(-2) + ':' + seconds.substr(-2);
     if(show_ms)
         formattedTime=formattedTime+ '.' + ms;
-    if(hours)
+    if(hours || show_zero_hours)
     {
         hours = " "+hours;
         formattedTime=hours.substr(-2) + ':' + formattedTime;
@@ -118,13 +118,13 @@ export function convertUTCDateToLocalDate(date) {
     var newDate = new Date(date.getTime()-date.getTimezoneOffset()*60*1000);
     return newDate;
 }
-export function formatTimestamp_ms(ts:number,show_ms=true,local=false) : string
+export function formatTimestamp_ms(ts:number,show_ms=true,local=false,show_zero_hours=false) : string
 {
 
     let date=new Date();
 
     date.setTime(ts);
-    return formatDateAsTime(date,show_ms,local);
+    return formatDateAsTime(date,show_ms,local,show_zero_hours);
 }
 export function formatUnixTime(ts:number,local=false) : string
 {
