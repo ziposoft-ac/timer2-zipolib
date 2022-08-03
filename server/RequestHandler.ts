@@ -36,7 +36,7 @@ export function getSR(id: string): typeof ServerRequest {
 }
 
 
-export async function processSR(req: Fastify.FastifyRequest, res: Fastify.FastifyReply) {
+export async function processSR(req: Fastify.FastifyRequest, reply: Fastify.FastifyReply) {
 
     let reqId = req.body["requestId"];
     let sr: ServerRequest;
@@ -46,7 +46,7 @@ export async function processSR(req: Fastify.FastifyRequest, res: Fastify.Fastif
 
         sr = new srFact();
         let log = sr.logger;
-        //console.log("got SR:", reqId);
+        console.log("got SR:", reqId);
 
         //Get the SR
         let input = sr.in;
@@ -102,13 +102,17 @@ export async function processSR(req: Fastify.FastifyRequest, res: Fastify.Fastif
 
     if (sr.req.createObjs) {
         let json = gObjFactory.saveInPlace(sr.out, true);
-        res.send(json);
+        reply.send(json);
     } else
-        res.send(sr.out);
+    {
+        reply.send(sr.out);
+
+    }
     try {
         sr.postSend();
     } catch (e) {
         sr.logger.log(e)
     }
     //console.log("done SR:", reqId);
+    return reply;
 }

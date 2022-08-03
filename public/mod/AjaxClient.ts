@@ -130,9 +130,17 @@ export class ClientRequestT<PARAMS,DATA>
                 }
                 else
                 {
+                    try
+                    {
 
-                    let recv= await res.json();
-                    Object.assign(this.out,recv);
+                        let recv= await res.json();
+                        Object.assign(this.out,recv);
+                    }
+                    catch (e) {
+                        console.log("cant parse JSON ajax data:",res.body)
+                    }
+
+
 
                 }
                 let defData=this.out.data;

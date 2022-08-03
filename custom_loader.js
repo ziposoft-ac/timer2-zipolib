@@ -55,16 +55,17 @@ const isAliasInSpecifier = (path, alias) => {
 }
 
 const aliases = getAliases();
+console.log("aliases:",aliases);
 
 export const resolve = (specifier, parentModuleURL, defaultResolve) => {
 
     const alias = Object.keys(aliases).find((key) => isAliasInSpecifier(specifier, key));
     let newSpecifier = alias === undefined
         ? specifier
-        : path.join(aliases[alias], specifier.substr(alias.length));
+        : path.join(aliases[alias], specifier.substring(alias.length));
+
 
     /*
-        console.log("aliases:",aliases);
 
     console.log("specifier:",specifier);
     console.log("parentModuleURL:",parentModuleURL);
@@ -76,10 +77,23 @@ export const resolve = (specifier, parentModuleURL, defaultResolve) => {
     {
         if(newSpecifier.startsWith("/")
             ||newSpecifier.startsWith(".")
-            ||newSpecifier.startsWith("@")
+           // ||newSpecifier.startsWith("@")
         )
-        newSpecifier+=".js";
-    }
+        {
+            newSpecifier+=".js";
 
-    return defaultResolve(newSpecifier, parentModuleURL);
+
+        }
+    }
+    let prom= defaultResolve(newSpecifier, parentModuleURL);
+    prom.then(()=>{
+            //console.log("success:",newSpecifier);
+
+        },
+        ()=>{
+            console.log("failed:",newSpecifier);
+
+        }
+        )
+    return prom;
 }
