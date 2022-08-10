@@ -27,7 +27,7 @@ export async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function mergeObj(src:Object,dest:Object) {
+export function mergeObj(src:Object,dest:Object) {
     if(src)
         for(let key in src)
             if(key in dest)

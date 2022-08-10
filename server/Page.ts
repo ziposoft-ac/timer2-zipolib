@@ -2,7 +2,6 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {Dirent} from "fs";
 import * as Fastify from "fastify";
-import { FastifyCookieOptions } from 'fastify-cookie'
 
 import {PageData} from "/zs_client/PageData";
 import pretty from "pretty";

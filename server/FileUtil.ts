@@ -9,6 +9,7 @@
 import fs from 'fs';
 import CsvParse from "csv-parse";
 import * as  pathlib from "path";
+import * as Util from "/zs_client/Util.js"
 
 export async function jsonFileWrite(filename:string,obj:object,pretty=false) : Promise<boolean>
 {
@@ -21,7 +22,7 @@ export async function jsonFileWrite(filename:string,obj:object,pretty=false) : P
     }
     return true;
 }
-export async function jsonFileRead<T>(filename:string) : Promise<T>
+export async function jsonFileRead<T>(filename:string,objToMerge:T=null) : Promise<T>
 {
     let obj:T=null;
     try {
@@ -32,6 +33,11 @@ export async function jsonFileRead<T>(filename:string) : Promise<T>
     catch (e) {
         //console.log("jsonFileRead FAILED:",filename,e);
         return null;
+    }
+    if(objToMerge)
+    {
+        Util.mergeObj(obj,objToMerge);
+        return objToMerge;
     }
     return obj;
 }
