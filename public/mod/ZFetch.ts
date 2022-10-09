@@ -23,7 +23,8 @@ export interface FetchOptions {
 
 export async function zfetch<T>(path: string,
                                 params ?: Record<any, any>,
-                                options?: Partial<FetchOptions>): Promise<FetchResult<T>> {
+                                options?: Partial<FetchOptions>)
+    : Promise<FetchResult<T>> {
 
     let res: Response;
     let opt: FetchOptions =

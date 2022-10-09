@@ -37,14 +37,7 @@ export class AjaxResponseT<DATA extends Object> extends AjaxResponse
     }
     data: DATA;
 }
-function makeParam<PARAMS>(paramT :   (new () => PARAMS))
-{
-    return new AjaxParamsT<PARAMS>(paramT);
-}
-function makeResponse<DATA>(dataT :   (new () => DATA))
-{
-    return new AjaxResponseT<DATA>(dataT);
-}
+
 enum ReqLevel
 {
     public,
