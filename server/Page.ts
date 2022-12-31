@@ -1,7 +1,12 @@
+import 'source-map-support/register.js';
+
 import * as fs from 'fs'
 import * as path from 'path'
 import {Dirent} from "fs";
 import * as Fastify from "fastify";
+import { FastifyCookieOptions } from '@fastify/cookie'
+import {FastifyReply, FastifyRequest} from "fastify";
+import cookie from '@fastify/cookie'
 
 import {PageData} from "/zs_client/PageData";
 import pretty from "pretty";
@@ -12,7 +17,7 @@ const gFetchversion = Date.now();
 export interface PageProps {
     title?: string;
     module?: string;
-    req: Fastify.FastifyRequest;
+    req: FastifyRequest;
     main?: string;
 }
 
