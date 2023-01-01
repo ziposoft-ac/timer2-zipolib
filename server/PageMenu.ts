@@ -9,6 +9,7 @@ import {PageProps, PageServer} from "./Page";
 
 export class PageMenu extends PageServer
 {
+    showMenu=true;
     staticData : PageDataMenu;//recast staticData
     constructor(props: PageProps) {
         super(props);
@@ -21,7 +22,7 @@ export class PageMenu extends PageServer
         this.css.push("/zs_public/css/Menu.css");
     }
     menubar : IM.IMenuBar={type:IM.Type.MenuBar, id: "topmenu",label:"menu",items:[]};
-    header() : string { return "<zs-menubar id=\"topmenu\"></zs-menubar>"; }
+    header() : string { return (this.showMenu? "<zs-menubar id=\"topmenu\"></zs-menubar>":""); }
 }
 export class PageDirectory extends PageServer
 {

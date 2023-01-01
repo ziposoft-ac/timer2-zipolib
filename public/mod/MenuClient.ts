@@ -138,6 +138,7 @@ export class Menu extends MenuBase
     protected children : MenuBase[]=[];
     elm : ElmMenu;
     expanded=false;
+    show=true;
 
     constructor(props: IM.IMenu,elm:ElmMenu=null ) {
         super(props);
