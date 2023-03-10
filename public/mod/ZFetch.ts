@@ -1,10 +1,6 @@
-var fetch=fetch;
-if (typeof(fetch) === 'undefined') {
-    let nodefetch=await import('node-fetch');
-    fetch=nodefetch.default;
-}
+
 export interface FetchResult<T> {
-    data: T;
+    data: T | string;
     response: Response;
     success: boolean;
     error_msg: string;
@@ -64,7 +60,13 @@ export async function zfetch<T>(path: string,
         res = await fetch(path, init);
         if (res.ok) {
             if (res.status == 200)
-                ret.data = await res.json();
+            {
+                if(options.format==format.json)
+                    ret.data = await res.json();
+                else
+                    ret.data = await res.text();
+
+            }
             ret.success = true;
         }
 
