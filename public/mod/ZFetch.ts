@@ -17,6 +17,26 @@ export interface FetchOptions {
     format?:format;
 }
 
+
+function encode(obj, path="") {
+    let queryString = "";
+
+    const pairs = Object.entries(obj).map(([key, val]) => {
+        // Handle the nested, recursive case, where the value to encode is an object itself
+        let k=(path?path+'['+key+']':key );
+
+        if (typeof val === "object") {
+            return encode(val, k);
+        }
+        else {
+            // Handle base case, where the value to encode is simply a string.
+            return [k,val].map(encodeURIComponent).join("=");
+        }
+    });
+    return pairs.join("&");
+    //return pairs;
+}
+
 export async function zfetch<T>(path: string,
                                 params ?: Record<any, any>,
                                 options?: Partial<FetchOptions>)
@@ -51,10 +71,11 @@ export async function zfetch<T>(path: string,
                 }
             };
         } else {
-            let url = new URL(path);
             if (params)
-                url.search = new URLSearchParams(params).toString();
-            path = url.toString();
+            {
+                path = path + "?" +  encode(params);
+
+            }
         }
 
         res = await fetch(path, init);
