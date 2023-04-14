@@ -10,7 +10,7 @@ import cookie from '@fastify/cookie'
 
 import {PageData} from "/zs_client/PageData";
 import pretty from "pretty";
-import {Logger} from "/zs_client/Logger";
+import {Logger, LoggerArray} from "/zs_client/Logger";
 
 const gFetchversion = Date.now();
 
@@ -19,6 +19,7 @@ export interface PageProps {
     module?: string;
     req: FastifyRequest;
     main?: string;
+    client_opts : object;
 }
 
 export async function GetPage(props: PageProps): Promise<string> {
@@ -29,7 +30,7 @@ export async function GetPage(props: PageProps): Promise<string> {
 }
 
 export class PageServer {
-    log: Logger = new Logger();
+    log=   new LoggerArray();
     debug = false;
     access = 9;
     googleTagId: string = null;
@@ -41,10 +42,7 @@ export class PageServer {
         this.redirectUrl = url;
     }
 
-    props: PageProps = {
-        req: null
-
-    };
+    props: PageProps ;
     title: string = "ZipoSoft";
     description: string = null;
     og_image="";
