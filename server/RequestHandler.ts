@@ -46,7 +46,7 @@ export async function processSR(req: Fastify.FastifyRequest, reply: Fastify.Fast
 
         sr = new srFact();
         let log = sr.logger;
-        console.log("got SR:", reqId);
+        //console.log("got SR:", reqId);
 
         //Get the SR
         let input = sr.in;
