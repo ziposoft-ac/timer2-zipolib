@@ -9,13 +9,19 @@ import {PageProps, PageServer} from "./Page";
 
 export class PageMenu extends PageServer
 {
-    showMenu=true;
+    showMenu=false;
     staticData : PageDataMenu;//recast staticData
     constructor(props: PageProps) {
         super(props);
-        this.modules = ["/zs_client/MenuClient"];
 
-        this.staticData.menubar=this.menubar;
+        if(props.req.cookies?.access=='admin')
+        {
+            this.showMenu=true;
+            this.staticData.menubar=this.menubar;
+            this.modules = ["/zs_client/MenuClient"];
+
+        }
+
         //props.req.cookies['']
         this.page_module="/zs_client/ClientPage";
 

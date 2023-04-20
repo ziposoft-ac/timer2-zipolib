@@ -86,11 +86,12 @@ export function PageClient<STATIC_DATA extends PageData >(  StaticDataT:(new () 
 
 export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> extends PageClientT<STATIC_DATA>
 {
-        menubar : MenuBar;
+        menubar : MenuBar=null;
         constructor(staticData: Partial<STATIC_DATA>) {
             console.log("PageClientMenu constructor");
             super(staticData);
-            this.menubar =new MenuBar(this.staticData.menubar);
+            if(this.staticData?.menubar)
+                this.menubar =new MenuBar(this.staticData.menubar);
 
         }
         setHeader() {
@@ -102,13 +103,17 @@ export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> ex
         async run() {
             super.run();
             console.log("run PageClientMenuT");
-            this.menubar.updateDisplay();
-            window.onresize = () => this.setHeader();
-            screen.orientation.onchange = () => {
-                console.log("orientation");
+            if(this.menubar)
+            {
+                this.menubar.updateDisplay();
+                window.onresize = () => this.setHeader();
+                screen.orientation.onchange = () => {
+                    console.log("orientation");
+                    this.setHeader();
+                }
                 this.setHeader();
             }
-            this.setHeader();
+
         }
     }
 

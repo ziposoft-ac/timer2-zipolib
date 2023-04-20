@@ -91,9 +91,11 @@ export class PageServer {
             <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
             <meta name="author" content="ZipoSoft, Inc."/>
             <meta id="viewport" name="viewport" content="width=device-width, initial-scale=1">
+
         ${ss}
         </head>
         <body>`;
+        //            <meta name="viewport" content="width=device-width, user-scalable=no" />
     }
 
     foot(): string {
