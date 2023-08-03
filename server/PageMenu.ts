@@ -13,15 +13,17 @@ export class PageMenu extends PageServer
     staticData : PageDataMenu;//recast staticData
     constructor(props: PageProps) {
         super(props);
+        if(props.client_opts["showMenu"])
+            this.showMenu=true;
 
         if(props.req.cookies?.access=='admin')
-        {
             this.showMenu=true;
+        if(this.showMenu)
+        {
             this.staticData.menubar=this.menubar;
             this.modules = ["/zs_client/MenuClient"];
 
         }
-
         //props.req.cookies['']
         this.page_module="/zs_client/ClientPage";
 

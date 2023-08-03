@@ -2,7 +2,13 @@ import pathlib from "path";
 
 
 
-
+let x=process.env;
+var proj_root=process.cwd();
+var zipo_root=x.ZIPO_ROOT;
+if(x.PROJ_ROOT)
+    proj_root=x.PROJ_ROOT;
+global["proj_root"]=proj_root;
+global["zipo_root"]=zipo_root;
 
 function func(...pathSegments: string[]): string
 {

@@ -22,6 +22,7 @@ export class TestViewerPage extends PageMenu
 {
 
     constructor(props:P.PageProps) {
+        props.client_opts["showMenu"]=true;
         super(props);
 
 
@@ -256,7 +257,7 @@ export class TestRoute extends Router
         {
 
             try {
-                pageObj=new TestViewerPage({req});
+                pageObj=new TestViewerPage({req,client_opts:{showMenu:true}});
                 if(clientPageExists)
                 {
                     pageObj.page_module="/pages/"+module_path;
