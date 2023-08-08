@@ -55,6 +55,7 @@ export class PageServer {
     enableCache = false;
 
     constructor(props: PageProps) {
+        props.client_opts??={};
         this.props = props;
         if (props.req) {
             //console.log("cookies:", props.req.cookies);

@@ -6,11 +6,21 @@
  * Written by Anthony Corriveau <ac@ZipoSoft.com>  2018
  */
 
+
+
 import fs from 'fs';
 import CsvParse from "csv-parse";
 import * as  pathlib from "path";
-import * as Util from "/zs_client/Util.js"
+import process from "process";
 
+import * as Util from "/zs_client/Util.js"
+export let proj_root=process.cwd();
+if(process.env.PROJ_ROOT)
+{
+    proj_root=process.env.PROJ_ROOT;
+    console.log("Setting proj_root:",proj_root);
+}
+global["proj_root"]=proj_root;
 export async function jsonFileWrite(filename:string,obj:object,pretty=false) : Promise<boolean>
 {
     try {
@@ -87,19 +97,26 @@ export async function fileExists(filename) :Promise< fs.Stats>
 {
     let stats=null;
     let error=null;
-    stats= await fs.promises.stat(filename).catch(
-        (err)=>{
-            if(err['code']&&(err.code=='ENOENT'))
-            {
+    try {
+        stats= await fs.promises.stat(filename).catch(
+            (err)=>{
+                if(err['code']&&(err.code=='ENOENT'))
+                {
 
+                }
+                else
+                {
+                    error=err;
+                }
+                return null;
             }
-            else
-            {
-                error=err;
-            }
-            return null;
-        }
-    );
+        );
+    }
+    catch(e)
+    {
+        console.log("error")
+    }
+
     return stats;
 }
 export async function getFileStat(filename) :Promise< { stats: fs.Stats, error: Object}>

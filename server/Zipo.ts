@@ -1,19 +1,26 @@
 import pathlib from "path";
+import process from "process";
 
 
 
-let x=process.env;
+var zipo_root=process.cwd();
 var proj_root=process.cwd();
-var zipo_root=x.ZIPO_ROOT;
-if(x.PROJ_ROOT)
-    proj_root=x.PROJ_ROOT;
+if(process.env.PROJ_ROOT)
+{
+    proj_root=process.env.PROJ_ROOT;
+    console.log("Setting proj_root:",proj_root);
+}
 global["proj_root"]=proj_root;
+
+if(process.env.ZIPO_ROOT)
+{
+    proj_root=process.env.PROJ_ROOT;
+    console.log("Setting proj_root:",proj_root);
+}
+global["proj_root"]=proj_root;
+
 global["zipo_root"]=zipo_root;
 
-function func(...pathSegments: string[]): string
-{
-    return "x";
-}
 
 
 export class ZiposoftServerLib
