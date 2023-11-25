@@ -22,7 +22,6 @@ export class TestViewerPage extends PageMenu
 {
 
     constructor(props:P.PageProps) {
-        props.client_opts["showMenu"]=true;
         super(props);
 
 
