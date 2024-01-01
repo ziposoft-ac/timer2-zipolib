@@ -120,7 +120,7 @@ export abstract class TableBase
     }
     updateStructure()
     {
-        let colsMeta: sqlColMeta[]=this.zb.sdb.pragma(`table_info(${this.name})`);
+        let colsMeta: sqlColMeta[]=<sqlColMeta[]>this.zb.sdb.pragma(`table_info(${this.name})`);
         let existingCols=new Map<string,sqlColMeta>();
         for(let col of colsMeta)
             existingCols.set(col.name,col);
@@ -258,16 +258,18 @@ export abstract class TableBase
         }
         return null;
     }
-    getRowsByCond(cond : object) : any[]
+    getRowsByCond(cond : object,nocase=false) : any[]
     {
         let name="";
         for(let key in cond)
         {
             name+=key;
         }
-        return this.getRowsByQueryName(name,cond);
+        if(nocase)
+            name+='_no_case';
+        return this.getRowsByQueryName(name,cond,nocase);
     }
-    getRowsByQueryName(name,cond : object) : any[]
+    getRowsByQueryName(name,cond : object,nocase=false) : any[]
     {
         // This creates a new select obj for every call
         let select  =this.getSelect(name);
@@ -280,6 +282,8 @@ export abstract class TableBase
                 wh+=`${key}= :${key} `;
             }
             let sql=`SELECT * FROM  ${this.name} WHERE ${wh} `;
+            if(nocase)
+                sql+="COLLATE NOCASE";
             return sql;
         },cond);
         return rows;
@@ -328,7 +332,7 @@ export abstract class TableBase
         this.stm_get_all =  this.stm_get_all || this.zb.sdb.prepare(`SELECT * FROM  ${this.name}`);
         for(const row of this.stm_get_all.iterate())
         {
-            if(callback(row))
+            if(callback(<any[]>row))
                 break;
         }
     };
@@ -533,10 +537,10 @@ export class Table<T extends DataObj> extends TableBase
     }
 
 
-    getObjsByCond(cond : Partial<T>) : T[]
+    getObjsByCond(cond : Partial<T>,nocase=false) : T[]
     {
         // This creates a new select obj for every call
-        return this.rowsToObjs(this.getRowsByCond(cond));
+        return this.rowsToObjs(this.getRowsByCond(cond,nocase));
     }
     getObjByQueryName(queryName,cond : object) : T
     {
