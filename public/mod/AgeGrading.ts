@@ -22,7 +22,7 @@ export enum Gender {
 };
 export enum Units {
     miles="miles",
-    meters="m",
+    meters="meters",
     km="km"
 };
 export var AgeGrading= {
@@ -136,7 +136,8 @@ export var AgeGrading= {
             table = AgeGrading.tableMen;
         if(!table)
         {
-            throw Error("Invalid gender:"+gender);
+            console.error("Invalid gender:"+gender);
+            return 0;
         }
         let col = this.getColumn(distance, units);
         if (col)

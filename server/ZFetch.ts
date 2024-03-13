@@ -10,12 +10,12 @@ if (typeof(fetch) === 'undefined') {
 
 
  */
-import * as F from 'node-fetch';
+//import * as F from 'node-fetch';
 
 
 export interface FetchResult<T> {
     data: T;
-    response: F.Response;
+    response: Response;
     success: boolean;
     error_msg: string;
     stack: string;
@@ -34,7 +34,7 @@ export async function zfetch(path: string,
                                 params ?: Record<any, any>,
                                 options?: Partial<FetchOptions>): Promise<FetchResult<string>> {
 
-    let res: F.Response;
+    let res: Response;
     let opt: FetchOptions =
         {
             method: "GET",
@@ -69,7 +69,7 @@ export async function zfetch(path: string,
             path = url.toString();
         }
 
-        res = await F.default(path, init);
+        res = await fetch(path, init);
         if (res.ok) {
 
             if (res.status == 200)
@@ -122,7 +122,7 @@ export async function objfetch<T>(path: string,
                                 params ?: Record<any, any>,
                                 options?: Partial<FetchOptions>): Promise<FetchResult<T>> {
 
-    let res: F.Response;
+    let res: Response;
     let opt: FetchOptions =
         {
             method: "GET",
@@ -157,7 +157,7 @@ export async function objfetch<T>(path: string,
             path = url.toString();
         }
 
-        res = await F.default(path, init);
+        res = await fetch(path, init);
         if (res.ok) {
             if (res.status == 200)
             {
