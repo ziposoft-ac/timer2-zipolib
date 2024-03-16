@@ -38,7 +38,7 @@ export class PageClientT<STATIC_DATA extends PageData> {
     elm_main: HTMLElement;
     elm_header: HTMLElement;
     cookies = Cookies;
-    storage =new StorageData();
+    public storage =new StorageData();
     storageName = "Page";
     get accessLevel() { return this.storage.accessLevel; }
 

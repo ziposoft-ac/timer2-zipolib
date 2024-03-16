@@ -6,8 +6,12 @@
  * Written by Anthony Corriveau <ac@ZipoSoft.com>  2018
  */
 
-export function capitalizeFirstLetter(string) {
+function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+export function capitalizeName(name) {
+    return name.replace(/\b(\w)/g, s => s.toUpperCase());
 }
 export async function importClientServer(path:string)
 {
