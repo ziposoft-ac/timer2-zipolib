@@ -20,6 +20,7 @@ export interface PageProps {
     req: FastifyRequest;
     main?: string;
     client_opts : object;
+    showmenu:boolean;
 }
 
 export async function GetPage(props: PageProps): Promise<string> {
