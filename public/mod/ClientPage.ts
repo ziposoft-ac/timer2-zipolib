@@ -87,6 +87,7 @@ export function PageClient<STATIC_DATA extends PageData >(  StaticDataT:(new () 
 export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> extends PageClientT<STATIC_DATA>
 {
         menubar : MenuBar=null;
+        headerHeight=0;
         constructor(staticData: Partial<STATIC_DATA>) {
             console.log("PageClientMenu constructor");
             super(staticData);
@@ -96,6 +97,7 @@ export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> ex
         }
         setHeader() {
             let h = D.tag('header').clientHeight;
+            this.headerHeight=h;
             document.documentElement.style.setProperty('--header-height', h.toString());
             console.log("header height:", h)
     
