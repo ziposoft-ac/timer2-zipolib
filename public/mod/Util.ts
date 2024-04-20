@@ -11,6 +11,7 @@ function capitalizeFirstLetter(string) {
 }
 
 export function capitalizeName(name) {
+    name=name.toLowerCase();
     return name.replace(/\b(\w)/g, s => s.toUpperCase());
 }
 export async function importClientServer(path:string)

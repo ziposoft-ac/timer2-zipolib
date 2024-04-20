@@ -7,7 +7,14 @@
  */
 
 
+export function areDatesEqual (d1:string,d2:string) {
+    let date1 = new Date(d1).getTime();
+    let date2 = new Date(d2).getTime();
 
+    if (date1 < date2)   return false;
+    if (date1 > date2)   return false;
+    return true;
+};
 export function getReadableDateFromMs(ts_milliseconds) {
     let date = new Date(ts_milliseconds);
     return  date.toLocaleDateString();
