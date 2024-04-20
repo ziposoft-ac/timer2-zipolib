@@ -1,0 +1,2 @@
+certbot certonly  --cert-name ziposoft.com --expand -d puddinandthefruitbat.com,ziposoft.com,test1.ziposoft.com,test2.ziposoft.com,ziposoft.us,www.ziposoft.com,mst.ziposoft.com,cgtc.ziposoft.com,cgtctest.ziposoft.com,cgtc.ziposoft.us,a.tiles.ziposoft.com,b.tiles.ziposoft.com,c.tiles.ziposoft.com,landfilldogs.info,landfilldogs.com,www.landfilldogs.com,umstead.run,shannonjohnstone.com,test.shannonjohnstone.com,www.shannonjohnstone.com,mst.report,zipobase.com,beechtree.space
+

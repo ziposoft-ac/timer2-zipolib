@@ -1,0 +1,3 @@
+#certbot certonly  --cert-name local.ziposoft.com  -d sjc.mutts.pw --preferred-challenges dns
+#certbot --manual -d sjc.mutts.pw --preferred-challenges dns certonly
+certbot --manual certonly  --cert-name local.ziposoft.com --expand -d sjc.mutts.pw,local.ziposoft.com --preferred-challenges dns
