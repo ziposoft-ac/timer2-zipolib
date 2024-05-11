@@ -9,7 +9,7 @@ export enum LogLevel{
 
 }
 
-export class Logger
+export abstract class Logger
 {
     timestampShow=false;
     getMs():string
@@ -35,21 +35,29 @@ export class Logger
             console.log(str);
 
     };
+    // default implimentation, override this
+    abstract logString(line:string);
 
-    logString(line:string)
-    {
-        console.log(line);
-    }
     error(...args: any[]) { this.log(args); }
     warn(...args: any[]) { if(this.level>=LogLevel.warn) this.log(...args); }
     info(...args: any[]) { if(this.level>=LogLevel.info) this.log(...args); }
     verb(...args: any[]) { if(this.level>=LogLevel.verb) this.log(...args); }
     debug(...args: any[]) { if(this.level>=LogLevel.debug) this.log(...args); }
 
+    log_obj(obj:object)
+    {
+        try {
+            this.logString(JSON.stringify(obj,null,2));
 
+        }
+        catch (e)
+        {
+
+        }
+    }
 
     agent="unknown";
-    constructor() {
+    constructor(public echo_console=false) {
         if(globalThis.process)
         {
             this.agent="Node";
@@ -70,7 +78,7 @@ export class Logger
             }
         }
     }
-    echo_console=true;
+
     level:LogLevel=LogLevel.info;
     stack()
     {
@@ -118,7 +126,14 @@ export class LoggerArray extends Logger
 
     }
 }
+export class LoggerConsole extends Logger
+{
+    override logString(line:string)
+    {
+        console.log(line);
+
+    }
+}
 
 
-
-export var gLog =new Logger();
+export var gLog =new LoggerConsole();

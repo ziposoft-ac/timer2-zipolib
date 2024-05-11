@@ -6,6 +6,7 @@
  * Written by Anthony Corriveau <ac@ZipoSoft.com>  2018
  */
 
+
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
@@ -14,6 +15,26 @@ export function capitalizeName(name) {
     name=name.toLowerCase();
     return name.replace(/\b(\w)/g, s => s.toUpperCase());
 }
+
+export function containsUppercase(str) {
+    return /[A-Z]/.test(str);
+}
+export function containsLowercase(str) {
+    return /[a-z]/.test(str);
+}
+
+export function containsUpperAndLowercase(str):boolean
+{
+    let low=containsLowercase(str);
+    let up=containsUppercase(str);
+    if(up&&low)
+        return true;
+    return false;
+}
+
+
+
+
 export async function importClientServer(path:string)
 {
     let mod;

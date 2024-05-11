@@ -51,6 +51,21 @@ export async function jsonFileRead<T>(filename:string,objToMerge:T=null) : Promi
     }
     return obj;
 }
+export function csvParseBuffer (buff:string): Promise<string[][]> {
+
+    return new Promise(function (fulfilled, rejected) {
+
+        CsvParse(buff,(err, records) =>
+        {
+            if(err)
+                rejected(err);
+            else
+                fulfilled(records);
+        });
+    })
+
+}
+
 export async function loadCsvFile(fullpath:string,rowCallback: (data:string[])=>void) : Promise<boolean>
 {
 
