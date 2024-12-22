@@ -17,8 +17,11 @@ let gradeMar=ageGrading.getGrade('F',23,26.22,"miles",3*60*60);
 
 export const KM_IN_MILES = 1.60934;
 export enum Gender {
-    M="M",
-    F="F"
+    Male = 'M',
+    Female = 'F',
+    Other = 'O',
+    Unknown = 'U',
+    NotSet = '?',
 };
 export enum Units {
     miles="miles",
@@ -113,7 +116,7 @@ export var AgeGrading= {
             return 0;
         let ageRow = age - 4;
         let table = AgeGrading.tableMen;
-        if (gender == Gender.F)
+        if (gender == Gender.Female)
             table = AgeGrading.tableWomen;
         return table[ageRow][column];
     },
@@ -130,9 +133,9 @@ export var AgeGrading= {
             return false;
         let ageRow = age - 4;
         let table = null;
-        if (gender === Gender.F)
+        if (gender === Gender.Female)
             table = AgeGrading.tableWomen;
-        if (gender === Gender.M)
+        if (gender === Gender.Male)
             table = AgeGrading.tableMen;
         if(!table)
         {
