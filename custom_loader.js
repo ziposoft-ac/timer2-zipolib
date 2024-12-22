@@ -18,7 +18,7 @@ import fs from "fs";
 let npmPackage={};
 let buff=await fs.promises.readFile(proj_root+"/package.json").catch((e)=>{
     console.log("Cannot get package.json:",e);
-    exit(1)
+    process.exit(1)
 });
 if(buff)
 {
@@ -28,7 +28,7 @@ if(buff)
     catch (e)
     {
         console.log("Cannot parse package.json:",e);
-        exit(1)
+        process.exit(1)
     }
 }
 
