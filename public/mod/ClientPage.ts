@@ -117,6 +117,10 @@ export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> ex
             }
 
         }
+        async onMenuChange()
+        {
+
+        }
     }
 
 
