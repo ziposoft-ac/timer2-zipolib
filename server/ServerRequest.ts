@@ -59,10 +59,10 @@ export class ServerRequestT<P,D> extends ServerRequest
 {
     get params() : P { return this.in.params }
     get data() : D { return this.out.data }
-    override in:AjaxParamsT<P>;
-    override out:AjaxResponseT<D>;
+    declare in:AjaxParamsT<P>;
+    declare out:AjaxResponseT<D>;
     //reqT :  ReqT<P,D>;
-    override req: AjaxRequest<P,D>;
+    declare req: AjaxRequest<P,D>;
     constructor(ajaxReqT: ReqT<P,D> ) {
         super( );
         this.requestId=ajaxReqT.name;

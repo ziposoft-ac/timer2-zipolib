@@ -256,8 +256,8 @@ export class MenuBar extends Menu
 }
 export class MenuSelectItem extends MenuItem
 {
-    value: any;
-    parent: MenuSelect;
+    declare value: any;
+    declare parent: MenuSelect;
     constructor(props: IM.ISelectVal ) {
         super(props);
         this.value=props.value;
@@ -281,7 +281,7 @@ export class MenuSelect extends Menu
     currentSelection : MenuSelectItem;
     options : object;
     baseName: string;
-    props: IM.ISelect;
+    declare props: IM.ISelect;
     selectItems ={};
 
     updateDisplay()
@@ -331,7 +331,7 @@ export class MenuSelect extends Menu
 }
 export class MenuInput extends MenuItem
 {
-    props : IM.IInput;
+    declare props : IM.IInput;
 
     editbox: HTMLInputElement;
     editMode=false;
@@ -365,7 +365,7 @@ export class MenuInput extends MenuItem
 }
 export class MenuTextEdit extends MenuInput
 {
-    props : IM.ITextEdit;
+    declare props : IM.ITextEdit;
     constructor(props : IM.ITextEdit) {
         super(props);
         this.editbox.type="label";
@@ -396,7 +396,7 @@ export class MenuNumberEdit extends MenuInput
         this.editbox.value=value;
     }
 
-    props : IM.INumberEdit;
+    declare props : IM.INumberEdit;
     constructor(props : IM.INumberEdit) {
         super(props);
         if(!props.decimalPlaces)
@@ -415,7 +415,7 @@ export class MenuNumberEdit extends MenuInput
 
 export class MenuBool extends MenuItem
 {
-    props : IM.IBool;
+    declare props : IM.IBool;
     constructor(props : IM.IBool) {
         super(props);
     }
@@ -481,7 +481,7 @@ export class MenuFunc extends MenuItem
 
 export class MenuPageFunc extends MenuFunc
 {
-    func :  ()=> any;
+    declare  func :  ()=> any;
     constructor(props : IM.IPageFunc) {
         let page: typeof PageClientMenu=globalThis["page"];
 
@@ -555,8 +555,12 @@ export class ElmMenu extends ElmMenuBase
         this.div = document.createElement("div");
         //this.classList.add("menusub");
         this.a = document.createElement("a");
-
-        this.name=menu.props.label;
+        if(!menu?.props)
+        {
+            console.error("ElmMenu menu props is null?");
+        }
+        else
+            this.name=menu.props.label;
         this.classList.add("menushow");
         this.classList.add("menusub");
         this.appendChild(this.a);

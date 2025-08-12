@@ -10,7 +10,7 @@ import {PageProps, PageServer} from "./Page";
 export class PageMenu extends PageServer
 {
     showMenu=false;
-    staticData : PageDataMenu;//recast staticData
+    declare staticData : PageDataMenu;//recast staticData
     constructor(props: PageProps) {
         super(props);
         this.showMenu=props.showmenu;

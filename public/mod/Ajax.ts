@@ -27,7 +27,7 @@ export class  AjaxParamsT<PARAMS  extends Object> extends AjaxParams
         super();
         this.params=new paramT();
     }
-    params: PARAMS;
+    declare params: PARAMS;
 }
 export class AjaxResponseT<DATA extends Object> extends AjaxResponse
 {
@@ -35,7 +35,7 @@ export class AjaxResponseT<DATA extends Object> extends AjaxResponse
         super();
         this.data=new dataT();
     }
-    data: DATA;
+    declare data: DATA;
 }
 
 enum ReqLevel

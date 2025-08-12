@@ -62,7 +62,7 @@ export function mergeObj(src:Object,dest:Object) {
 type PromExec = (data:any)=>void;
 interface SemWait
 {
-    timer:NodeJS.Timer;
+    timer:NodeJS.Timeout;
     resolve:PromExec;
 }
 export class Semaphore
