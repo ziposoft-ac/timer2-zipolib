@@ -312,6 +312,20 @@ export class MenuSelect extends Menu
     {
         this.dataSet(item.value);
         this.updateDisplay();
+        if(this.props.onSelect)
+            this.props.onSelect(item.value,item.label);
+    }
+    setOptions(opts:object)
+    {
+        this.options=opts;
+        this.clearItems();
+        this.selectItems={};
+        for(let key in this.options)
+        {
+            let item=new MenuSelectItem({label:this.options[key], value:key,parent:this});
+            this.addItem(item);
+            this.selectItems[key]=item;
+        }
     }
     constructor(props: IM.ISelect ) {
         super(props);

@@ -83,7 +83,7 @@ export function getGradeFromSeconds(
     let wrSec = getAgeRecordSeconds(tbl,  distance, units,age);
     if (!wrSec)
         return 0;
-    console.log("age standard=",wrSec);
+    //console.log("age standard=",wrSec);
     return wrSec / secondsIn * 100;
 
 

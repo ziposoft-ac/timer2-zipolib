@@ -45,6 +45,7 @@ export interface IInput extends IBase {
 }
 export interface ISelect extends IInput {
     options : Object;
+    onSelect?: (key,label)=>void;
 
 }
 export interface IBool extends IInput {
