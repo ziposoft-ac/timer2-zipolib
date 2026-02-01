@@ -138,6 +138,7 @@ export class ZDataTable
     createTable() {
         if (this.dt) return;
         let self= this;
+        $.fn.dataTable.ext.errMode = 'none';
         this.dt = $(this.table_id).DataTable(self.options_dt );
         $(`${this.table_id} > tbody`).on('click', '>tr', function () {
             self.rowClickCallback(this);

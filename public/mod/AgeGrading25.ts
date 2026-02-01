@@ -25,7 +25,7 @@ export enum Gender {
     NotSet = '?',
 };
 
-export enum Units {
+export enum DistanceUnits {
     miles = "miles",
     meters = "meters",
     km = "km"
@@ -50,7 +50,7 @@ export function getGrade(
     gender: Gender /* M/F */,
     age: number/* Age in years 5-100 */,
     distance: number,
-    units: Units/* km or miles */,
+    units: DistanceUnits/* km or miles */,
     time: string): number {
     let secondsIn = timeStrToSec(time);
     return getGradeFromSeconds(gender, age, distance, units, secondsIn)
@@ -62,7 +62,7 @@ export function getGradeFromSeconds(
     gender: Gender /* M/F */,
     age: number/* Age in years 5-100 */,
     distance: number,
-    units: Units/* km or miles */,
+    units: DistanceUnits/* km or miles */,
     secondsIn: number): number {
     age = Number(age);
     distance = Number(distance);
@@ -72,9 +72,9 @@ export function getGradeFromSeconds(
         return 0;
     if (!age)
         return 0;
-    if (units == Units.meters) {
+    if (units == DistanceUnits.meters) {
         //TODO support meters properly
-        units = Units.km;
+        units = DistanceUnits.km;
         distance = distance / 1000;
     }
     let tbl=getTable(gender);
@@ -161,8 +161,8 @@ function getWrSecondsFromColumn(
 export function getFactor(
     gender: Gender/* M/F */,
     age: number,
-    distKM: number, /* distance in kilometers */
-    units: Units/* km or miles */): number  {
+    dist: number, /* distance  */
+    units: DistanceUnits/* km or miles */): number  {
 
     if (age < 5)
         return null;
@@ -172,24 +172,28 @@ export function getFactor(
     if (!table)
         return 0;
 
-    let colIdx = getColumnIdx(distKM, units);
+    let colIdx = getColumnIdx(dist, units);
     if (colIdx >= 0) {
         return table.ages[age][colIdx];
     }
-    if (units === Units.miles)
-        distKM = distKM * KM_IN_MILES;
-    if (distKM < 1)
+    // estimate factor for odd distance
+    // convert dist to KM if necessary
+    if (units === DistanceUnits.miles)
+        dist = dist * KM_IN_MILES;
+
+
+    if (dist < 1)
         return null;
-    if (distKM >= 200)
+    if (dist >= 200)
         return null;
     for (let i = 2; i < t.distKM.length; i++) {
         let d2 = t.distKM[i];
-        if (d2 > distKM) {
+        if (d2 > dist) {
             /* estimate what the factor  would be */
             let d1 = t.distKM[i - 1];
             let t1 = table[age][i - 1];
             let t2 = table[age][i];
-            let tx = ((t2 - t1) * (distKM - d1) / (d2 - d1)) + t1;
+            let tx = ((t2 - t1) * (dist - d1) / (d2 - d1)) + t1;
             return tx;
         }
     }
@@ -199,7 +203,7 @@ export function getFactor(
 export function getAgeRecordSeconds(
     tbl:AgeGradingTable,
     distance: number, /* distance  */
-    units: Units/* km or miles */,
+    units: DistanceUnits/* km or miles */,
     age:number): number | false {
 
 
@@ -210,7 +214,7 @@ export function getAgeRecordSeconds(
         return wr/factor;
     }
     let dRow=t.distKM;
-    if (units === Units.miles)
+    if (units === DistanceUnits.miles)
         dRow=t.distMiles;
     if (distance < dRow[0])
         return false;
@@ -234,12 +238,17 @@ export function getAgeRecordSeconds(
     return false;
 }
 
-function getColumnIdx(distance: number/* distance in kilometers */,
-                      units: Units/* km or miles */): number {
+export function getColumnIdx(distance: number/* distance in kilometers */,
+                      units: DistanceUnits/* km or miles */): number {
     let row = t.distMiles
-    if (units === Units.km)
+    if (units === DistanceUnits.km)
+        row = t.distKM;
+    if (units === DistanceUnits.meters)
+    {
+        distance=distance/1000;
         row = t.distKM;
 
+    }
     for (let i = 0; i < t.distKM.length; i++) {
         if (row[i] === distance)
             return i;
@@ -253,7 +262,7 @@ export function getTimeFromGrade(
     gender: Gender /* M/F */,
     age: number/* Age in years 5-100 */,
     distance: number, /* distance in miles or km */
-    units: Units/* km or miles */,
+    units: DistanceUnits/* km or miles */,
     grade: number/* percentage format 75.5 */): number {
     age = Number(age);
     distance = Number(distance);
@@ -267,7 +276,7 @@ export function getTimeFromGrade(
     let sec = wrSec / grade * 100;
     return sec;
 }
-const t: AgeGradeTables = {
+export const t: AgeGradeTables = {
     desc: ["1 Mile", "5 km", "6 km", "4 Mile", "8 km", "5 MIle", "10 km", "7 Mile", "12 km", "15 km", "10 Mile", "20 km", "H. Mar", "25 km", "30 km", "Marathon", "50 km", "50 Mile", "100 km", "150 km", "100 Mile", "200 km"],
     distKM: [1.609344, 5, 6, 6.437376, 8, 8.0467, 10, 11.2654, 12, 15, 16.09344, 20, 21.0975, 25, 30, 42.195, 50, 80.467, 100, 150, 160.934, 200, 1.609344, 5, 6, 6.437376, 8, 8.0467, 10, 11.2654, 12, 15, 16.09344, 20, 21.0975, 25, 30, 42.195, 50, 80.4672, 100, 150, 160.9344, 200],
     distMiles: [1,     3.106855, 3.7282260000000003, 4,     4.970968, 5, 6.21371, 7, 7.4564520000000005, 9.320565, 10, 12.42742, 13.1093746725, 15.534275000000001, 18.64113, 26.218749345, 31.068550000000002, 50, 62.137100000000004, 93.20565, 100, 124.27420000000001],
