@@ -46,6 +46,20 @@ export function getDateTimeFileNameCurrent() {
 
     return getDateTimeFileName(new Date());
 }
+export function getAgeFromBdayStr(from_str:string,bday_str:string) {
+    if(typeof bday_str != "string")
+        return null;
+
+    let from=new Date(from_str);
+    let bday=new Date(bday_str);
+    if(isNaN(from.valueOf()))         return null;
+    if(isNaN(bday.valueOf()))         return null;
+    let years=from.getFullYear()-bday.getFullYear();
+    bday.setFullYear(from.getFullYear());
+    if(bday>from)
+        years--;
+    return years;
+}
 export function getTodayAgeFromBdayStr(bday:string) {
     if(typeof bday != "string")
         return null;
@@ -57,11 +71,18 @@ export function getTodayAgeFromBdayStr(bday:string) {
     let ageDate=new Date(diff);
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
-export function getAgeFromBirthDate(fromday:Date,bday:Date) {
-    let diff=fromday.valueOf()-bday.valueOf();
-    let ageDate=new Date(diff);
-    return Math.abs(ageDate.getUTCFullYear() - 1970);
+export function getAgeFromBirthDate(from:Date,bday:Date) {
+    if(isNaN(from.valueOf()))         return null;
+    if(isNaN(bday.valueOf()))         return null;
+    let years=from.getFullYear()-bday.getFullYear();
+    bday.setFullYear(from.getFullYear());
+    if(bday>from)
+        years--;
+    return years;
+
+
 }
+/*
 export function getAgeFromBday(fromday:Date,day, month, year) {
     day = parseInt(day);
     month = parseInt(month);
@@ -87,7 +108,7 @@ export function getAgeFromBday(fromday:Date,day, month, year) {
     }
     return age;
 }
-
+*/
 export function formatDateAsTime(date,show_ms=true,local=false,show_zero_hours=false):string
 {
 
@@ -152,7 +173,7 @@ export function formatUnixTime(ts:number,local=false) : string
     return formattedTime;
 }
 export function secToTimeStr(sec: number) :string {
-    if (!sec)
+    if (!Number.isFinite(sec))
         return "";
     sec=Number(sec);
 
