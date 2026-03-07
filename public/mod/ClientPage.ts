@@ -103,7 +103,7 @@ export class PageClientMenuT<STATIC_DATA extends PageDataMenu = PageDataMenu> ex
     
         }
         async run() {
-            super.run();
+            await super.run();
             console.log("run PageClientMenuT");
             if(this.menubar)
             {
